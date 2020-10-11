@@ -25,10 +25,10 @@ N_Features_Search_Space_Dimension = 10**4
 # Hyperparameter Grid (Readout)
 #------------------------------#
 if trial_run == True:
-    param_grid_Vanilla_Nets = {'batch_size': [128],
-                    'epochs': [800],
-                      'learning_rate': [0.146],
-                      'height': [200],
+    param_grid_Vanilla_Nets = {'batch_size': [8],
+                    'epochs': [2],
+                      'learning_rate': [0.0001],
+                      'height': [2],
                        'depth': [2],
                       'input_dim':[15],
                        'output_dim':[1]}
