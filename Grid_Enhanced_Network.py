@@ -8,7 +8,7 @@ n_jobs = 4
 n_iter = 1
 n_iter_trees = 1#20
 # Number of CV Folds
-CV_folds = 2
+CV_folds = 4
 
 #----------------------#
 ########################
@@ -24,11 +24,11 @@ N_Features_Search_Space_Dimension = 10**4
 
 # Hyperparameter Grid (Readout)
 #------------------------------#
-param_grid_Vanilla_Nets = {'batch_size': [16,32,64],
-                    'epochs': [200],#, 400, 800, 1000, 1200, 1400],
+param_grid_Vanilla_Nets = {'batch_size': [16],#16,32,64],
+                    'epochs': [1],#, 400, 800, 1000, 1200, 1400],
                       'learning_rate': [0.0001],#,0.0005,0.005],
-                      'height': [300],# 400, 800, 1000],
-                       'depth': [1],#2,3],
+                      'height': [2],# 400, 800, 1000],
+                       'depth': [2],#2,3],
                       'input_dim':[15],
                        'output_dim':[1]}
                        
