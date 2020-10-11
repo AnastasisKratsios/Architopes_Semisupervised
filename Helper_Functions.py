@@ -221,3 +221,23 @@ def build_simple_deep_classifier(n_folds , n_jobs, n_iter, param_grid_in, X_trai
 # Update User
 #-------------#
 print('Deep Classifier - Ready')
+
+
+
+#-------------------------------#
+#=### Results & Summarizing ###=#
+#-------------------------------#
+def reporter(y_train_hat_in,y_test_hat_in,y_train_in,y_test_in):
+    # Training Performance
+    Training_performance = np.array([mean_absolute_error(y_train_hat_in,y_train_in),
+                                mean_squared_error(y_train_hat_in,y_train_in),
+                                   mean_absolute_percentage_error(y_train_hat_in,y_train_in)])
+    # Testing Performance
+    Test_performance = np.array([mean_absolute_error(y_test_hat_in,y_test_in),
+                                mean_squared_error(y_test_hat_in,y_test_in),
+                                   mean_absolute_percentage_error(y_test_hat_in,y_test_in)])
+    # Organize into Dataframe
+    Performance_dataframe = pd.DataFrame({'train': Training_performance,'test': Test_performance})
+    Performance_dataframe.index = ["MAE","MSE","MAPE"]
+    # return output
+    return Performance_dataframe

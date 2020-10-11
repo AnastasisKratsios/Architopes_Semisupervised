@@ -33,6 +33,11 @@ from keras import backend as K
 # Evaluation
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
+# Forests (Random)
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.tree import DecisionTreeRegressor
+
+
 # Formatting:
 import pandas as pd
 import numpy as np
