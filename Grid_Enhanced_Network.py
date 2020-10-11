@@ -26,10 +26,10 @@ N_Features_Search_Space_Dimension = 10**4
 #------------------------------#
 if trial_run == True:
     param_grid_Vanilla_Nets = {'batch_size': [8],
-                    'epochs': [2],
-                      'learning_rate': [0.0001],
-                      'height': [2],
-                       'depth': [2],
+                    'epochs': [1200],
+                      'learning_rate': [0.14],
+                      'height': [200],
+                       'depth': [1],
                       'input_dim':[15],
                        'output_dim':[1]}
 else:
@@ -44,7 +44,7 @@ else:
 # Random Forest Grid
 #--------------------#
 Rand_Forest_Grid = {'learning_rate': [0.1],#, 0.05, 0.02, 0.01, 0.01],
-                    'max_depth': [4],#, 6, 10,50, 100],
-                    'min_samples_leaf': [3],#, 5, 9, 17, 50, 100, 150, 200],
-                   'n_estimators': [1],#00, 200, 500, 1000]
+                    'max_depth': [40],#, 6, 10,50, 100],
+                    'min_samples_leaf': [17],#, 5, 9, 17, 50, 100, 150, 200],
+                   'n_estimators': [1000],#00, 200, 500, 1000]
                    }

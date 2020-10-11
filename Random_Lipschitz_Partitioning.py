@@ -1,26 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Random Lipschitz Partition
-# 
-# We implement the random paritioning method of [Yair Bartal](https://scholar.google.com/citations?user=eCXP24kAAAAJ&hl=en):
-# - [On approximating arbitrary metrices by tree metrics](https://dl.acm.org/doi/10.1145/276698.276725)
-# 
-# The algorithm is summarized as follow:
-# 
+# # Semi-Supervised Architope
 # ---
-# 
-# ## Algorithm:
-#  1. Sample $\alpha \in [4^{-1},2^{-1}]$ randomly and uniformly,
-#  2. Apply a random suffle of the data, (a random bijection $\pi:\{i\}_{i=1}^X \rightarrow \mathbb{X}$),
-#  3. For $i = 1,\dots,I$:
-#    - Set $K_i\triangleq B\left(\pi(i),\alpha \Delta \right) - \bigcup_{j=1}^{i-1} P_j$
-#  
-#  4. Remove empty members of $\left\{K_i\right\}_{i=1}^X$.  
-#  
-#  **Return**: $\left\{K_i\right\}_{i=1}^{\tilde{X}}$.  
-#  
-#  For more details on the random-Lipschitz partition of Yair Bartal, see this [well-written blog post](https://nickhar.wordpress.com/2012/03/26/lecture-22-random-partitions-of-metric-spaces/).
 
 # ### Meta-parameters
 
@@ -46,9 +28,17 @@ raw_data_path_folder = "./inputs/raw/"
 data_path_folder = "./inputs/data/"
 
 
+# #### Code-Testin Parameter(s)
+
+# In[3]:
+
+
+trial_run = True
+
+
 # ### Import
 
-# In[ ]:
+# In[4]:
 
 
 # Load Packages/Modules
@@ -66,9 +56,30 @@ exec(open('Prepare_Data_California_Housing.py').read())
 # - Remove Bad Column
 # - Perform Training/Test Split
 
-# ### Define Random Partition Builder
+# # Random Lipschitz Partition Builder
+# 
+# We implement the random paritioning method of [Yair Bartal](https://scholar.google.com/citations?user=eCXP24kAAAAJ&hl=en):
+# - [On approximating arbitrary metrices by tree metrics](https://dl.acm.org/doi/10.1145/276698.276725)
+# 
+# The algorithm is summarized as follow:
+# 
+# ---
+# 
+# ## Algorithm:
+#  1. Sample $\alpha \in [4^{-1},2^{-1}]$ randomly and uniformly,
+#  2. Apply a random suffle of the data, (a random bijection $\pi:\{i\}_{i=1}^X \rightarrow \mathbb{X}$),
+#  3. For $i = 1,\dots,I$:
+#    - Set $K_i\triangleq B\left(\pi(i),\alpha \Delta \right) - \bigcup_{j=1}^{i-1} P_j$
+#  
+#  4. Remove empty members of $\left\{K_i\right\}_{i=1}^X$.  
+#  
+#  **Return**: $\left\{K_i\right\}_{i=1}^{\tilde{X}}$.  
+#  
+#  For more details on the random-Lipschitz partition of Yair Bartal, see this [well-written blog post](https://nickhar.wordpress.com/2012/03/26/lecture-22-random-partitions-of-metric-spaces/).
 
-# In[ ]:
+# ## Define Random Partition Builder
+
+# In[5]:
 
 
 from scipy.spatial import distance_matrix
@@ -76,7 +87,7 @@ from scipy.spatial import distance_matrix
 
 # Here we use $\Delta_{in} = Q_{q}\left(\Delta(\mathbb{X})\right)$ where $\Delta(\mathbb{X})$ is the vector of (Euclidean) distances between the given data-points, $q \in (0,1)$ is a hyper-parameter, and $Q$ is the empirical quantile function.
 
-# In[ ]:
+# In[6]:
 
 
 def Random_Lipschitz_Partioner(Min_data_size_percentage,q_in, X_train_in,y_train_in, CV_folds_failsafe, min_size):
@@ -171,20 +182,6 @@ def Random_Lipschitz_Partioner(Min_data_size_percentage,q_in, X_train_in,y_train
     # Remove Empty Partitions
     N_radios = N_radios[N_radios>0]
     
-    # Sanity Check #
-    #---------------#
-    # Check if partitioning makes sense and report minimum partition size
-#     sanity_checker = 0
-#     min_size_partition = math.inf
-#     for i in range(len(X_internal_train_list)):
-#         sanity_checker = sanity_checker + X_internal_train_list[i].shape[0]
-#         min_size_partition = min(min_size_partition,X_internal_train_list[i].shape[0])
-#     if(sanity_checker == X_train_in.shape[0]):
-#         print('Status: Everything Adds up...partitioning makes sense!')
-#         print('Minimum partition size: '+str(min_size_partition))
-#     else:
-#         print('Status: Warning something went wrong in partitioning: Probably some points are unnasigned!')
-    
     
     #-----------------------------------------------------------------#
     # Combine parts which are too small to perform CV without an error
@@ -238,13 +235,26 @@ def Random_Lipschitz_Partioner(Min_data_size_percentage,q_in, X_train_in,y_train
 
 # # Apply Random Partitioner to the given Dataset
 
-# In[ ]:
+# In[7]:
+
+
+import time
+partitioning_time_begin = time.time()
+
+
+# In[8]:
 
 
 X_parts_list, y_parts_list, N_ratios = Random_Lipschitz_Partioner(Min_data_size_percentage=.5, q_in=.8, X_train_in=X_train, y_train_in=y_train, CV_folds_failsafe=CV_folds,min_size = 500)
 
 
-# In[ ]:
+# In[9]:
+
+
+partitioning_time = time.time() - partitioning_time_begin
+
+
+# In[10]:
 
 
 print('The_parts_listhe number of parts are: ' + str(len(X_parts_list))+'.')
@@ -255,10 +265,25 @@ print('The_parts_listhe number of parts are: ' + str(len(X_parts_list))+'.')
 # - Generate predictions for (full) training and testings sets respectively, to be used in training the classifer and for prediction, respectively.  
 # - Generate predictions on all of testing-set (will be selected between later using classifier)
 
-# In[ ]:
+# In[11]:
+
+
+# Time-Elapse (Start) for Training on Each Part
+Architope_partition_training_begin = time.time()
+# Initialize running max for Parallel time
+Architope_partitioning_max_time_running = -math.inf # Initialize slowest-time at - infinity to force updating!
+
+
+# In[12]:
 
 
 for current_part in range(len(X_parts_list)):
+    #==============#
+    # Timer(begin) #
+    #==============#
+    current_part_training_time_for_parallel_begin = time.time()
+    
+    
     # Initializations #
     #-----------------#
     # Reload Grid
@@ -313,6 +338,12 @@ for current_part in range(len(X_parts_list)):
         # Training
         prediction_errors = np.abs(y_hat_train_loop.reshape(-1,)-y_train)
         training_quality = np.append(training_quality,prediction_errors.reshape(training_quality.shape[0],1),axis=1)
+        
+        #============#
+        # Timer(end) #
+        #============#
+        current_part_training_time_for_parallel = time.time() - current_part_training_time_for_parallel_begin
+        Architope_partitioning_max_time_running = max(Architope_partitioning_max_time_running,current_part_training_time_for_parallel)
 
 # Update User
 #-------------#
@@ -327,6 +358,13 @@ print(' ')
 print(' ')
 
 
+# In[13]:
+
+
+# Time-Elapsed Training on Each Part
+Architope_partition_training = time.time() - Architope_partition_training_begin
+
+
 # ---
 
 # ### Train Classifier
@@ -334,7 +372,14 @@ print(' ')
 # #### Deep Classifier
 # Prepare Labels/Classes
 
-# In[ ]:
+# In[14]:
+
+
+# Time-Elapsed Training Deep Classifier
+Architope_deep_classifier_training_begin = time.time()
+
+
+# In[15]:
 
 
 # Initialize Classes Labels
@@ -351,7 +396,7 @@ partition_labels_training = partition_labels_training+0
 
 # Re-Load Grid and Redefine Relevant Input/Output dimensions in dictionary.
 
-# In[ ]:
+# In[16]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -366,7 +411,7 @@ param_grid_Vanilla_Nets['output_dim'] = [partition_labels_training.shape[1]]
 
 # #### Train Model
 
-# In[ ]:
+# In[17]:
 
 
 # Train simple deep classifier
@@ -379,9 +424,16 @@ predicted_classes_train, predicted_classes_test = build_simple_deep_classifier(n
                                                                     X_test = X_test)
 
 
-# #### Write Predictions
+# In[18]:
 
-# In[ ]:
+
+# Time-Elapsed Training Deep Classifier
+Architope_deep_classifier_training = time.time() - Architope_deep_classifier_training_begin
+
+
+# Make Prediction(s)
+
+# In[19]:
 
 
 # Training Set
@@ -389,13 +441,19 @@ Architope_prediction_y_train = np.take_along_axis(predictions_train, predicted_c
 # Testing Set
 Architope_prediction_y_test = np.take_along_axis(predictions_test, predicted_classes_test[:,None], axis=1)
 
-# Compute Performance
-train_performance = np.array([mean_absolute_error(Architope_prediction_y_train,y_train),mean_squared_error(Architope_prediction_y_train,y_train),mean_absolute_percentage_error(Architope_prediction_y_train,y_train)])
-test_performance = np.array([mean_absolute_error(Architope_prediction_y_test,y_test),mean_squared_error(Architope_prediction_y_test,y_test),mean_absolute_percentage_error(Architope_prediction_y_test,y_test)])
-# Compile Performance Metrics
-performance_Architope = pd.DataFrame({'train': train_performance,'test': test_performance})
-performance_Architope.index = ["MAE","MSE","MAPE"]
 
+# #### Write Predictions
+
+# Compute Performance
+
+# In[20]:
+
+
+# Compute Peformance
+performance_Architope = reporter(y_train_hat_in=Architope_prediction_y_train,
+                                    y_test_hat_in=Architope_prediction_y_test,
+                                    y_train_in=y_train,
+                                    y_test_in=y_test)
 # Write Performance
 performance_Architope.to_latex((results_tables_path+"Architopes_full_performance.tex"))
 
@@ -417,7 +475,14 @@ print(performance_Architope)
 
 # #### Train Logistic Classifier (Benchmark)
 
-# In[ ]:
+# In[21]:
+
+
+# Time-Elapsed Training linear classifier
+Architope_logistic_classifier_training_begin = time.time()
+
+
+# In[22]:
 
 
 parameters = {'penalty': ['none','l1', 'l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
@@ -431,7 +496,7 @@ partition_labels_training = np.argmin(training_quality,axis=-1)
 
 # #### Train Logistic Classifier
 
-# In[ ]:
+# In[23]:
 
 
 # Update User #
@@ -448,7 +513,7 @@ classifier.fit(X_train, partition_labels_training)
 
 # #### Write Predicted Class(es)
 
-# In[ ]:
+# In[24]:
 
 
 # Training Set
@@ -460,34 +525,42 @@ predicted_classes_test_logistic_BM = classifier.best_estimator_.predict(X_test)
 Architope_prediction_y_test_logistic_BM = np.take_along_axis(predictions_test, predicted_classes_test_logistic_BM[:,None], axis=1)
 
 
+# In[25]:
+
+
+# Time-Elapsed Training linear classifier
+Architope_logistic_classifier_training = time.time() - Architope_logistic_classifier_training_begin
+
+
 # #### Compute Performance
 
-# In[ ]:
+# In[26]:
 
 
-# Compute Performance
-train_performance_logistic_BM = np.array([mean_absolute_error(Architope_prediction_y_train_logistic_BM,y_train),
-                                          mean_squared_error(Architope_prediction_y_train_logistic_BM,y_train),
-                                          mean_absolute_percentage_error(Architope_prediction_y_train_logistic_BM,y_train)])
-test_performance_logistic_BM = np.array([mean_absolute_error(Architope_prediction_y_test_logistic_BM,y_test),
-                                         mean_squared_error(Architope_prediction_y_test_logistic_BM,y_test),
-                                         mean_absolute_percentage_error(Architope_prediction_y_test_logistic_BM,y_test)])
-# Compile Performance Metrics
-performance_logistic_BM = pd.DataFrame({'train': train_performance_logistic_BM,'test': test_performance_logistic_BM})
-performance_logistic_BM.index = ["MAE","MSE","MAPE"]
-
+# Compute Peformance
+performance_architope_ffNN_logistic = reporter(y_train_hat_in=Architope_prediction_y_train_logistic_BM,
+                                    y_test_hat_in=Architope_prediction_y_test_logistic_BM,
+                                    y_train_in=y_train,
+                                    y_test_in=y_test)
 # Write Performance
-performance_logistic_BM.to_latex((results_tables_path+"Architopes_logistic_performance.tex"))
+performance_architope_ffNN_logistic.to_latex((results_tables_path+"Architopes_logistic_performance.tex"))
 
 # Update User
-print(performance_logistic_BM)
+print(performance_architope_ffNN_logistic)
 
 
 # ---
 
 # ## Bagged Feed-Forward Networks (ffNNs)
 
-# In[ ]:
+# In[27]:
+
+
+# Time for Bagging
+Bagging_ffNN_bagging_time_begin = time.time()
+
+
+# In[28]:
 
 
 # Train Bagging Weights in-sample
@@ -498,29 +571,30 @@ bagged_prediction_train = bagging_coefficients.predict(predictions_train)
 bagged_prediction_test = bagging_coefficients.predict(predictions_test)
 
 
-# In[ ]:
+# In[29]:
 
 
-# Compute Performance
-train_performance_bag = np.array([mean_absolute_error(bagged_prediction_train,y_train),
-                                  mean_squared_error(bagged_prediction_train,y_train),
-                                  mean_absolute_percentage_error(bagged_prediction_train,y_train)])
-test_performance_bag = np.array([mean_absolute_error(bagged_prediction_test,y_test),
-                                 mean_squared_error(bagged_prediction_test,y_test),
-                                 mean_absolute_percentage_error(bagged_prediction_test,y_test)])
-# Compile Performance Metrics
-performance_bagged = pd.DataFrame({'train': train_performance_bag,'test': test_performance_bag})
-performance_bagged.index = ["MAE","MSE","MAPE"]
+# Time for Bagging
+Bagging_ffNN_bagging_time = time.time() - Bagging_ffNN_bagging_time_begin
 
+
+# In[30]:
+
+
+# Compute Peformance
+performance_bagged_ffNN = reporter(y_train_hat_in=bagged_prediction_train,
+                                    y_test_hat_in=bagged_prediction_test,
+                                    y_train_in=y_train,
+                                    y_test_in=y_test)
 # Write Performance
-performance_bagged.to_latex((results_tables_path+"ffNN_Bagged.tex"))
+performance_bagged_ffNN.to_latex((results_tables_path+"ffNN_Bagged.tex"))
 
 # Update User
 print("Written Bagged Performance")
-print(performance_bagged)
+print(performance_bagged_ffNN)
 
 
-# In[ ]:
+# In[31]:
 
 
 print("Random Partition: Generated!...Feature Generation Complete!")
@@ -530,7 +604,7 @@ print("Random Partition: Generated!...Feature Generation Complete!")
 
 # #### Reload Hyper-parameter Grid
 
-# In[ ]:
+# In[32]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -539,7 +613,14 @@ exec(open('Grid_Enhanced_Network.py').read())
 exec(open('Helper_Functions.py').read())
 
 
-# In[ ]:
+# In[33]:
+
+
+# Time for Bagging
+Vanilla_ffNN_time_begin = time.time()
+
+
+# In[34]:
 
 
 #X_train vanilla ffNNs
@@ -556,6 +637,13 @@ y_hat_train_Vanilla_ffNN, y_hat_test_Vanilla_ffNN = build_ffNN(n_folds = CV_fold
 # In[ ]:
 
 
+# Time for Bagging
+Vanilla_ffNN_time = time.time() - Vanilla_ffNN_time_begin
+
+
+# In[ ]:
+
+
 # Update User #
 #-------------#
 print("Trained vanilla ffNNs")
@@ -566,13 +654,8 @@ print("Trained vanilla ffNNs")
 # In[ ]:
 
 
-# Compute Performance
-train_performance_Vanilla_ffNN = np.array([mean_absolute_error(y_hat_train_Vanilla_ffNN,y_train),mean_squared_error(y_hat_train_Vanilla_ffNN,y_train),mean_absolute_percentage_error(y_hat_train_Vanilla_ffNN,y_train)])
-test_performance_Vanilla_ffNN = np.array([mean_absolute_error(y_hat_test_Vanilla_ffNN,y_test),mean_squared_error(y_hat_test_Vanilla_ffNN,y_test),mean_absolute_percentage_error(y_hat_test_Vanilla_ffNN,y_test)])
-# Compile Performance Metrics
-performance_Vanilla_ffNN = pd.DataFrame({'train': train_performance_Vanilla_ffNN,'test': test_performance_Vanilla_ffNN})
-performance_Vanilla_ffNN.index = ["MAE","MSE","MAPE"]
-
+# Compute Peformance
+performance_Vanilla_ffNN = reporter(y_train_hat_in=y_hat_train_Vanilla_ffNN,y_test_hat_in=y_hat_test_Vanilla_ffNN,y_train_in=y_train,y_test_in=y_test)
 # Write Performance
 performance_Vanilla_ffNN.to_latex((results_tables_path+"ffNN_Vanilla.tex"))
 
@@ -582,15 +665,133 @@ print("Written Bagged Vanilla ffNNs")
 print(performance_Vanilla_ffNN)
 
 
+# ---
+
+# ## Run: Gradient Boosted Random Forest Regression
+
+# In[ ]:
+
+
+# Update User #
+#-------------#
+print('Training Gradient-Boosted Random Forest: In-progress...')
+# Run from External Script
+exec(open('Gradient_Boosted_Random_Forest_Regressor.py').read())
+
+# Update User #
+#-------------#
+print('Training of Gradient-Boosted Random Forest: Complete!')
+
+
+# ## Training Result(s)
+
+# #### Compute Required Training Time(s)
+
+# In[ ]:
+
+
+# In-Line #
+#---------#
+
+# Architope (Full) Time Lapse
+Architope_Full_Time = partitioning_time + Architope_partition_training + Architope_deep_classifier_training
+# Architope (Logistic) Time Lapse
+Architope_logistic_Time = partitioning_time + Architope_partition_training + Architope_logistic_classifier_training
+# Bagged ffNN Training Time
+Bagged_ffNN_Time = partitioning_time + Architope_partition_training + Bagging_ffNN_bagging_time
+# Vanilla ffNN
+Vanilla_ffNN_Time = Vanilla_ffNN_time_begin
+
+# Parallel (Only if applicable) #
+#-------------------------------#
+
+# Architope (Full) Time Lapse
+Architope_Full_Time_parallel = partitioning_time + Architope_partitioning_max_time_running + Architope_deep_classifier_training
+# Architope (Logistic) Time Lapse
+Architope_logistic_Time_parallel = partitioning_time + Architope_partitioning_max_time_running + Architope_logistic_classifier_training
+# Bagged ffNN Training Time
+Bagged_ffNN_Time_parallel = partitioning_time + Architope_partitioning_max_time_running + Bagging_ffNN_bagging_time
+
+
+# #### Write Required Training Times
+
+# In[35]:
+
+
+# Format Required Training Time(s)
+training_times_In_Line = pd.DataFrame({'Architope': [round(Architope_Full_Time,3)],
+                                'Architope-logistic': [round(Architope_logistic_Time,3)],
+                                'Vanilla ffNN': [round(Vanilla_ffNN_Time,3)],
+                                'Bagged ffNN': [round(Bagged_ffNN_Time,3)],
+                                'Grad.Bstd Rand.F': [round(Gradient_boosted_Random_forest_time,3)]},index=['In-Line'])
+training_times_Parallel = pd.DataFrame({'Architope': [round(Architope_Full_Time_parallel,3)],
+                                'Architope-logistic': [round(Architope_logistic_Time_parallel,3)],
+                                'Vanilla ffNN': ['-'],
+                                'Bagged ffNN': [round(Bagged_ffNN_Time_parallel,3)],
+                                'Grad.Bstd Rand.F': ['-']},index=['Parallel'])
+
+# Combine Training Times into Single Data-Frame #
+#-----------------------------------------------#
+Model_Training_times = training_times_In_Line.append(training_times_Parallel)
+
+# Write Required Training Time(s)
+Model_Training_times.to_latex((results_tables_path+"Model_Training_Times.tex"))
+# Display Required Training Time(s)
+print(Model_Training_times)
+
+
 # # Summary
 
 # In[ ]:
 
 
+print(' ')
+print(' ')
+print('#-------------------#')
+print(' PERFORMANCE SUMMARY:')
+print('#-------------------#')
+print(' ')
+print(' ')
+print('#-------------------#')
+print('Performance Metrics: ')
+print('#-------------------#')
+print(' ')
+print('----------------------------------------')
+print('----------------------------------------')
+print('Architope (Full)')
+print('----------------------------------------')
 print(performance_Architope)
-print(performance_logistic_BM)
-print(performance_bagged)
+print('----------------------------------------')
+print('Architope - Naive Logistic')
+print('----------------------------------------')
+print(performance_architope_ffNN_logistic)
+print('----------------------------------------')
+print('Vanilla ffNN')
+print('----------------------------------------')
 print(performance_Vanilla_ffNN)
+print('----------------------------------------')
+print('Bagged ffNN')
+print('----------------------------------------')
+print(performance_bagged_ffNN)
+print('----------------------------------------')
+print('Gradient Boosted Random Forest Regressor')
+print('----------------------------------------')
+print(Gradient_boosted_tree)
+print('----------------------------------------')
+print('----------------------------------------')
+print(' ')
+print(' ')
+
+print('#-------------------#')
+print('Efficiency Metrics: ')
+print('#-------------------#')
+print('Model Training Times:')
+print('----------------------------------------')
+print('Model_Training_times')
+print('----------------------------------------')
+print(' ')
+print(' ')
+print('😃😃 Have a great day!! 😃😃 ')
 
 
 # ---
