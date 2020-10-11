@@ -24,13 +24,22 @@ N_Features_Search_Space_Dimension = 10**4
 
 # Hyperparameter Grid (Readout)
 #------------------------------#
-param_grid_Vanilla_Nets = {'batch_size': [16],#16,32,64],
-                    'epochs': [1],#, 400, 800, 1000, 1200, 1400],
-                      'learning_rate': [0.0001],#,0.0005,0.005],
-                      'height': [2],# 400, 800, 1000],
-                       'depth': [2],#2,3],
+if trial_run == True:
+    param_grid_Vanilla_Nets = {'batch_size': [128],
+                    'epochs': [800],
+                      'learning_rate': [0.146],
+                      'height': [200],
+                       'depth': [2],
                       'input_dim':[15],
                        'output_dim':[1]}
+else:
+    param_grid_Vanilla_Nets = {'batch_size': [16,32,64],
+                        'epochs': [200, 400, 800, 1000, 1200, 1400],
+                          'learning_rate': [0.0001,0.0005,0.005],
+                          'height': [100,200, 400],
+                           'depth': [1,2,3],
+                          'input_dim':[15],
+                           'output_dim':[1]}
                        
 # Random Forest Grid
 #--------------------#
