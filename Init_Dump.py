@@ -80,7 +80,6 @@ import math
 
 
 # Overall Use
-get_ipython().run_line_magic('matplotlib', 'inline')
 import numpy as np
 import pandas as pd
 
@@ -116,7 +115,6 @@ from sklearn.linear_model import LassoCV
 from scipy.spatial import distance_matrix
 
 # Overall Use
-get_ipython().run_line_magic('matplotlib', 'inline')
 import numpy as np
 import pandas as pd
 
