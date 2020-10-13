@@ -1,4 +1,4 @@
-trial_run = False
+trial_run = True
 # This one is with larger height
 
 # This file contains the hyper-parameter grids used to train the imprinted-tree nets.
@@ -8,11 +8,6 @@ trial_run = False
 # Hyperparameter Grids #
 ########################
 #----------------------#
-
-Random_Depths_Readout = 10
-Random_Depths = np.array([2])#, 100, 500])#, 3,10, 20, 50, 100, 150,200, 500])
-N_Features = 1# Random_Depths.shape[0]
-N_Features_Search_Space_Dimension = 10**4
 
 
 # Hyperparameter Grid (Readout)

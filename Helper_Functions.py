@@ -149,15 +149,25 @@ def build_ffNN(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test
                                     random_state=2020,
                                     verbose=10)
     
-    # Fit
+    # Fit Model #
+    #-----------#
     Nice_Model_CVer.fit(X_train,y_train)
 
-    # Write Predictions
+    # Write Predictions #
+    #-------------------#
     y_hat_train = Nice_Model_CVer.predict(X_test_partial)
     y_hat_test = Nice_Model_CVer.predict(X_test)
     
-    # Return Values
-    return y_hat_train, y_hat_test
+    # Counter number of parameters #
+    #------------------------------#
+    # Extract Best Model
+    best_model = Nice_Model_CVer.best_estimator_
+    # Count Number of Parameters
+    N_params_best_ffNN = np.sum([np.prod(v.get_shape().as_list()) for v in best_model.model.trainable_variables])
+    
+    # Return Values #
+    #---------------#
+    return y_hat_train, y_hat_test, N_params_best_ffNN
 
 # Update User
 #-------------#
@@ -211,12 +221,16 @@ def build_simple_deep_classifier(n_folds , n_jobs, n_iter, param_grid_in, X_trai
     predicted_classes_train = CV_simple_deep_classifier_CVer.predict(X_train)
     predicted_classes_test = CV_simple_deep_classifier_CVer.predict(X_test)
     
-    # Report Predicted Class(es)
-#     predicted_classes_train = np.argmax(predicted_classes_train,axis=-1)
-#     predicted_classes_test = np.argmax(predicted_classes_test,axis=-1)
+    # Counter number of parameters #
+    #------------------------------#
+    # Extract Best Model
+    best_model = CV_simple_deep_classifier_CVer.best_estimator_
+    # Count Number of Parameters
+    N_params_best_classifier = np.sum([np.prod(v.get_shape().as_list()) for v in best_model.model.trainable_variables])
+
     
     # Return Values
-    return predicted_classes_train, predicted_classes_test
+    return predicted_classes_train, predicted_classes_test, N_params_best_classifier
 
 # Update User
 #-------------#

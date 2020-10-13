@@ -1,19 +1,54 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Gradient-Boosted Random Forest Regressor
+# # Semi-Supervised Architope
 # ---
 
-# ### Reload Initialization(s)
+# #### Mode: Code-Testin Parameter(s)
+
+# In[13]:
+
+
+trial_run = False
+
+
+# ### Meta-parameters
+
+# In[14]:
+
+
+# Test-size Ratio
+test_size_ratio = 0.3
+min_height = 100
+
+
+# ### Hyperparameters
+# 
+# Only turn of if running code directly here, typically this script should be run be called by other notebooks.  
 
 # In[15]:
+
+
+# load dataset
+results_path = "./outputs/models/"
+results_tables_path = "./outputs/results/"
+raw_data_path_folder = "./inputs/raw/"
+data_path_folder = "./inputs/data/"
+
+
+# ### Import
+
+# In[19]:
 
 
 # Load Packages/Modules
 exec(open('Init_Dump.py').read())
 # Load Hyper-parameter Grid
 exec(open('Grid_Enhanced_Network.py').read())
-# Import Time (for some reason must be done internally?)
+# Load Helper Function(s)
+exec(open('Helper_Functions.py').read())
+# Pre-process Data
+exec(open('Prepare_Data_California_Housing.py').read())
 import time
 
 
