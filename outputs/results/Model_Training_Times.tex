@@ -1,8 +1,11 @@
-\begin{tabular}{lrrlrl}
+\begin{tabular}{lll}
 \toprule
-{} &  Architope &  Architope-logistic & Vanilla ffNN &  Bagged ffNN & Grad.Bstd Rand.F \\
+{} & In-Line (L-Time) & Parallel (P-Time) \\
 \midrule
-In-Line (L-Time)  &     70.961 &              86.115 &       18.809 &       57.199 &            0.756 \\
-Parallel (P-Time) &     43.417 &              58.570 &            - &       29.654 &                - \\
+Vanilla ffNN       &            12.28 &                 - \\
+Grad.Bstd Rand.F   &            0.841 &                 - \\
+Bagged ffNN        &           51.933 &            26.856 \\
+Architope-logistic &           81.013 &            55.936 \\
+Architope          &           69.644 &            44.566 \\
 \bottomrule
 \end{tabular}
