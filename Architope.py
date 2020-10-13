@@ -6,27 +6,27 @@
 
 # #### Mode: Code-Testin Parameter(s)
 
-# In[13]:
+# In[1]:
 
 
-trial_run = False
+trial_run = True
 
 
 # ### Meta-parameters
 
-# In[14]:
+# In[2]:
 
 
 # Test-size Ratio
 test_size_ratio = 0.3
-min_height = 100
+min_height = 50
 
 
 # ### Hyperparameters
 # 
 # Only turn of if running code directly here, typically this script should be run be called by other notebooks.  
 
-# In[15]:
+# In[3]:
 
 
 # load dataset
@@ -38,7 +38,7 @@ data_path_folder = "./inputs/data/"
 
 # ### Import
 
-# In[19]:
+# In[4]:
 
 
 # Load Packages/Modules
@@ -49,6 +49,8 @@ exec(open('Grid_Enhanced_Network.py').read())
 exec(open('Helper_Functions.py').read())
 # Pre-process Data
 exec(open('Prepare_Data_California_Housing.py').read())
+# Import time separately
+import time
 
 
 # #### Pre-Process:
@@ -245,7 +247,12 @@ partitioning_time_begin = time.time()
 # In[8]:
 
 
-X_parts_list, y_parts_list, N_ratios = Random_Lipschitz_Partioner(Min_data_size_percentage=.5, q_in=.8, X_train_in=X_train, y_train_in=y_train, CV_folds_failsafe=CV_folds,min_size = 500)
+X_parts_list, y_parts_list, N_ratios = Random_Lipschitz_Partioner(Min_data_size_percentage=.5, 
+                                                                  q_in=.8, 
+                                                                  X_train_in=X_train, 
+                                                                  y_train_in=y_train, 
+                                                                  CV_folds_failsafe=CV_folds,
+                                                                  min_size = 500)
 
 
 # In[9]:
@@ -265,16 +272,18 @@ print('The_parts_listhe number of parts are: ' + str(len(X_parts_list))+'.')
 # - Generate predictions for (full) training and testings sets respectively, to be used in training the classifer and for prediction, respectively.  
 # - Generate predictions on all of testing-set (will be selected between later using classifier)
 
-# In[17]:
+# In[11]:
 
 
 # Time-Elapse (Start) for Training on Each Part
 Architope_partition_training_begin = time.time()
 # Initialize running max for Parallel time
 Architope_partitioning_max_time_running = -math.inf # Initialize slowest-time at - infinity to force updating!
+# Initialize N_parameter counter for Architope
+N_params_Architope = 0
 
 
-# In[ ]:
+# In[12]:
 
 
 for current_part in range(len(X_parts_list)):
@@ -308,7 +317,14 @@ for current_part in range(len(X_parts_list)):
     # Failsafe (number of data-points)
     CV_folds_failsafe = min(CV_folds,max(1,(X_train.shape[0]-1)))
     # Train Network
-    y_hat_train_full_loop, y_hat_test_full_loop = build_ffNN(n_folds = CV_folds_failsafe, n_jobs = n_jobs,n_iter = n_iter, param_grid_in = param_grid_Vanilla_Nets, X_train= X_parts_list[current_part], y_train=y_parts_list[current_part],X_test_partial=X_train ,X_test=X_test)
+    y_hat_train_full_loop, y_hat_test_full_loop, N_params_Architope_loop = build_ffNN(n_folds = CV_folds_failsafe, 
+                                                                                     n_jobs = n_jobs,
+                                                                                     n_iter = n_iter, 
+                                                                                     param_grid_in = param_grid_Vanilla_Nets, 
+                                                                                     X_train= X_parts_list[current_part], 
+                                                                                     y_train=y_parts_list[current_part],
+                                                                                     X_test_partial=X_train,
+                                                                                     X_test=X_test)
     
     # Append predictions to data-frames
     ## If first prediction we initialize data-frames
@@ -344,6 +360,11 @@ for current_part in range(len(X_parts_list)):
         #============#
         current_part_training_time_for_parallel = time.time() - current_part_training_time_for_parallel_begin
         Architope_partitioning_max_time_running = max(Architope_partitioning_max_time_running,current_part_training_time_for_parallel)
+        
+        #============---===============#
+        # N_parameter Counter (Update) #
+        #------------===---------------#
+        N_params_Architope = N_params_Architope + N_params_Architope_loop
 
 # Update User
 #-------------#
@@ -358,7 +379,7 @@ print(' ')
 print(' ')
 
 
-# In[18]:
+# In[13]:
 
 
 # Time-Elapsed Training on Each Part
@@ -372,14 +393,14 @@ Architope_partition_training = time.time() - Architope_partition_training_begin
 # #### Deep Classifier
 # Prepare Labels/Classes
 
-# In[ ]:
+# In[14]:
 
 
 # Time-Elapsed Training Deep Classifier
 Architope_deep_classifier_training_begin = time.time()
 
 
-# In[ ]:
+# In[15]:
 
 
 # Initialize Classes Labels
@@ -396,7 +417,7 @@ partition_labels_training = partition_labels_training+0
 
 # Re-Load Grid and Redefine Relevant Input/Output dimensions in dictionary.
 
-# In[ ]:
+# In[16]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -411,20 +432,20 @@ param_grid_Vanilla_Nets['output_dim'] = [partition_labels_training.shape[1]]
 
 # #### Train Model
 
-# In[ ]:
+# In[17]:
 
 
 # Train simple deep classifier
-predicted_classes_train, predicted_classes_test = build_simple_deep_classifier(n_folds = CV_folds, 
-                                                                    n_jobs = n_jobs, 
-                                                                    n_iter =n_iter, 
-                                                                    param_grid_in=param_grid_Vanilla_Nets, 
-                                                                    X_train = X_train, 
-                                                                    y_train = partition_labels_training,
-                                                                    X_test = X_test)
+predicted_classes_train, predicted_classes_test, N_params_deep_classifier = build_simple_deep_classifier(n_folds = CV_folds, 
+                                                                                                        n_jobs = n_jobs, 
+                                                                                                        n_iter =n_iter, 
+                                                                                                        param_grid_in=param_grid_Vanilla_Nets, 
+                                                                                                        X_train = X_train, 
+                                                                                                        y_train = partition_labels_training,
+                                                                                                        X_test = X_test)
 
 
-# In[ ]:
+# In[18]:
 
 
 # Time-Elapsed Training Deep Classifier
@@ -433,7 +454,7 @@ Architope_deep_classifier_training = time.time() - Architope_deep_classifier_tra
 
 # Make Prediction(s)
 
-# In[ ]:
+# In[19]:
 
 
 # Training Set
@@ -446,7 +467,7 @@ Architope_prediction_y_test = np.take_along_axis(predictions_test, predicted_cla
 
 # Compute Performance
 
-# In[ ]:
+# In[20]:
 
 
 # Compute Peformance
@@ -475,14 +496,14 @@ print(performance_Architope)
 
 # #### Train Logistic Classifier (Benchmark)
 
-# In[ ]:
+# In[21]:
 
 
 # Time-Elapsed Training linear classifier
 Architope_logistic_classifier_training_begin = time.time()
 
 
-# In[ ]:
+# In[22]:
 
 
 parameters = {'penalty': ['none','l1', 'l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
@@ -496,7 +517,7 @@ partition_labels_training = np.argmin(training_quality,axis=-1)
 
 # #### Train Logistic Classifier
 
-# In[ ]:
+# In[23]:
 
 
 # Update User #
@@ -513,7 +534,7 @@ classifier.fit(X_train, partition_labels_training)
 
 # #### Write Predicted Class(es)
 
-# In[ ]:
+# In[24]:
 
 
 # Training Set
@@ -524,8 +545,11 @@ Architope_prediction_y_train_logistic_BM = np.take_along_axis(predictions_train,
 predicted_classes_test_logistic_BM = classifier.best_estimator_.predict(X_test)
 Architope_prediction_y_test_logistic_BM = np.take_along_axis(predictions_test, predicted_classes_test_logistic_BM[:,None], axis=1)
 
+# Extract Number of Parameters Logistic Regressor
+N_params_best_logistic = (classifier.best_estimator_.coef_.shape[0])*(classifier.best_estimator_.coef_.shape[1]) + len(classifier.best_estimator_.intercept_)
 
-# In[ ]:
+
+# In[25]:
 
 
 # Time-Elapsed Training linear classifier
@@ -534,7 +558,7 @@ Architope_logistic_classifier_training = time.time() - Architope_logistic_classi
 
 # #### Compute Performance
 
-# In[ ]:
+# In[26]:
 
 
 # Compute Peformance
@@ -553,14 +577,14 @@ print(performance_architope_ffNN_logistic)
 
 # ## Bagged Feed-Forward Networks (ffNNs)
 
-# In[ ]:
+# In[27]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time_begin = time.time()
 
 
-# In[ ]:
+# In[28]:
 
 
 # Train Bagging Weights in-sample
@@ -570,15 +594,18 @@ bagging_coefficients = LinearRegression().fit(predictions_train,y_train)
 bagged_prediction_train = bagging_coefficients.predict(predictions_train)
 bagged_prediction_test = bagging_coefficients.predict(predictions_test)
 
+# Write number of trainable bagging parameters
+N_bagged_parameters = len(bagging_coefficients.coef_) + 1
 
-# In[ ]:
+
+# In[29]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time = time.time() - Bagging_ffNN_bagging_time_begin
 
 
-# In[ ]:
+# In[30]:
 
 
 # Compute Peformance
@@ -594,7 +621,7 @@ print("Written Bagged Performance")
 print(performance_bagged_ffNN)
 
 
-# In[ ]:
+# In[31]:
 
 
 print("Random Partition: Generated!...Feature Generation Complete!")
@@ -604,7 +631,7 @@ print("Random Partition: Generated!...Feature Generation Complete!")
 
 # #### Reload Hyper-parameter Grid
 
-# In[ ]:
+# In[32]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -613,35 +640,35 @@ exec(open('Grid_Enhanced_Network.py').read())
 exec(open('Helper_Functions.py').read())
 
 
-# In[ ]:
+# In[33]:
 
 
 # Time for Bagging
-Vanilla_ffNN_time_begin = time.time()
+Vanilla_ffNN_time_beginn = time.time()
 
 
-# In[ ]:
+# In[34]:
 
 
 #X_train vanilla ffNNs
-y_hat_train_Vanilla_ffNN, y_hat_test_Vanilla_ffNN = build_ffNN(n_folds = CV_folds_failsafe, 
-                                                               n_jobs = n_jobs, 
-                                                               n_iter = n_iter, 
-                                                               param_grid_in = param_grid_Vanilla_Nets, 
-                                                               X_train=X_train, 
-                                                               y_train=y_train, 
-                                                               X_test_partial=X_train,
-                                                               X_test=X_test)
+y_hat_train_Vanilla_ffNN, y_hat_test_Vanilla_ffNN, N_params_Vanilla_ffNN = build_ffNN(n_folds = CV_folds_failsafe, 
+                                                                                   n_jobs = n_jobs, 
+                                                                                   n_iter = n_iter, 
+                                                                                   param_grid_in = param_grid_Vanilla_Nets, 
+                                                                                   X_train=X_train, 
+                                                                                   y_train=y_train, 
+                                                                                   X_test_partial=X_train,
+                                                                                   X_test=X_test)
 
 
-# In[ ]:
+# In[35]:
 
 
 # Time for Bagging
-Vanilla_ffNN_time = time.time() - Vanilla_ffNN_time_begin
+Vanilla_ffNN_time = time.time() - Vanilla_ffNN_time_beginn
 
 
-# In[ ]:
+# In[36]:
 
 
 # Update User #
@@ -651,7 +678,7 @@ print("Trained vanilla ffNNs")
 
 # #### Evaluate Performance
 
-# In[ ]:
+# In[37]:
 
 
 # Compute Peformance
@@ -667,7 +694,7 @@ print(performance_Vanilla_ffNN)
 
 # #### Compute Required Training Time(s)
 
-# In[ ]:
+# In[38]:
 
 
 # In-Line #
@@ -680,7 +707,7 @@ Architope_logistic_Time = partitioning_time + Architope_partition_training + Arc
 # Bagged ffNN Training Time
 Bagged_ffNN_Time = partitioning_time + Architope_partition_training + Bagging_ffNN_bagging_time
 # Vanilla ffNN
-Vanilla_ffNN_Time = Vanilla_ffNN_time_begin
+Vanilla_ffNN_Time = Vanilla_ffNN_time
 
 # Parallel (Only if applicable) #
 #-------------------------------#
@@ -695,7 +722,7 @@ Bagged_ffNN_Time_parallel = partitioning_time + Architope_partitioning_max_time_
 
 # #### Write Required Training Times
 
-# In[ ]:
+# In[39]:
 
 
 # Update User #
@@ -726,7 +753,7 @@ print(Model_Training_times)
 
 # ## Run: Gradient Boosted Random Forest Regression
 
-# In[ ]:
+# In[40]:
 
 
 # Update User #
@@ -744,7 +771,7 @@ print('Training of Gradient-Boosted Random Forest: Complete!')
 
 # #### (Update) Write Required Training Times
 
-# In[ ]:
+# In[41]:
 
 
 # Update User #
@@ -752,20 +779,23 @@ print('Training of Gradient-Boosted Random Forest: Complete!')
 print('Completing Table: Required Training Times')
 
 # Format Required Training Time(s)
-training_times_In_Line = pd.DataFrame({'Architope': [round(Architope_Full_Time,3)],
-                                'Architope-logistic': [round(Architope_logistic_Time,3)],
-                                'Vanilla ffNN': [round(Vanilla_ffNN_Time,3)],
-                                'Bagged ffNN': [round(Bagged_ffNN_Time,3)],
-                                'Grad.Bstd Rand.F': [round(Gradient_boosted_Random_forest_time,3)]},index=['In-Line'])
-training_times_Parallel = pd.DataFrame({'Architope': [round(Architope_Full_Time_parallel,3)],
-                                'Architope-logistic': [round(Architope_logistic_Time_parallel,3)],
-                                'Vanilla ffNN': ['-'],
-                                'Bagged ffNN': [round(Bagged_ffNN_Time_parallel,3)],
-                                'Grad.Bstd Rand.F': ['-']},index=['Parallel'])
+training_times_In_Line = pd.DataFrame({'Vanilla ffNN': [round(Vanilla_ffNN_Time,3)],
+                                       'Grad.Bstd Rand.F': [round(Gradient_boosted_Random_forest_time,3)],
+                                       'Bagged ffNN': [round(Bagged_ffNN_Time,3)],
+                                       'Architope-logistic': [round(Architope_logistic_Time,3)],
+                                       'Architope': [round(Architope_Full_Time,3)]
+                                      },index=['In-Line (L-Time)'])
+
+training_times_Parallel = pd.DataFrame({'Vanilla ffNN': ['-'],
+                                        'Grad.Bstd Rand.F': ['-'],
+                                        'Bagged ffNN': [round(Bagged_ffNN_Time_parallel,3)],
+                                        'Architope-logistic': [round(Architope_logistic_Time_parallel,3)],
+                                        'Architope': [round(Architope_Full_Time_parallel,3)]},index=['Parallel (P-Time)'])
 
 # Combine Training Times into Single Data-Frame #
 #-----------------------------------------------#
 Model_Training_times = training_times_In_Line.append(training_times_Parallel)
+Model_Training_times = Model_Training_times.transpose()
 
 # Write Required Training Time(s)
 Model_Training_times.to_latex((results_tables_path+"Model_Training_Times.tex"))
@@ -773,9 +803,90 @@ Model_Training_times.to_latex((results_tables_path+"Model_Training_Times.tex"))
 print(Model_Training_times)
 
 
+# ### Prediction Metric(s)
+# #### Write Predictive Performance Dataframe(s)
+
+# In[42]:
+
+
+# Write Training Performance
+predictive_performance_training = pd.DataFrame({'ffNN': performance_Vanilla_ffNN.train,
+                                                'GBRF': Gradient_boosted_tree.train,
+                                                'ffNN-bag': performance_bagged_ffNN.train,
+                                                'ffNN-lgt': performance_architope_ffNN_logistic.train,
+                                                'tope': performance_Architope.train})
+predictive_performance_training = predictive_performance_training.transpose()
+
+# Write Testing Performance
+predictive_performance_test = pd.DataFrame({'ffNN': performance_Vanilla_ffNN.test,
+                                            'GBRF': Gradient_boosted_tree.test,
+                                            'ffNN-bag': performance_bagged_ffNN.test,
+                                            'ffNN-lgt': performance_architope_ffNN_logistic.test,
+                                            'tope': performance_Architope.test})
+predictive_performance_test = predictive_performance_test.transpose()
+
+# Write into one Dataframe #
+#--------------------------#
+predictive_performance_training.to_latex((results_tables_path+"Models_predictive_performance_training.tex"))
+predictive_performance_test.to_latex((results_tables_path+"Models_predictive_performance_testing.tex"))
+
+# Update User #
+#-------------#
+print(predictive_performance_training)
+
+
+# ### Model Complexity/Efficiency Metrics
+
+# In[45]:
+
+
+# Compute Parameters for composite models #
+#-----------------------------------------#
+N_params_Architope_full = N_params_Architope + N_params_deep_classifier
+N_params_Architope_logistic = N_params_Architope + N_params_best_logistic
+N_params_bagged_ffNN = N_params_Architope + N_bagged_parameters
+
+# Build Table #
+#-------------#
+Number_of_model_parameters = pd.DataFrame({'Vanilla ffNN': [N_params_Vanilla_ffNN],
+                                           'Grad.Bstd Rand.F': [N_tot_params_in_forest],
+                                           'Bagged ffNN': [N_params_bagged_ffNN],
+                                           'Architope-logistic': [N_params_Architope_logistic],
+                                           'Architope': [N_params_Architope_full]},
+                                            index=['N_par'])
+
+Number_of_model_parameters = Number_of_model_parameters.transpose()
+
+# Append to Dataframe #
+#---------------------#
+Model_Complexity_Metrics = Model_Training_times
+Model_Complexity_Metrics['N_par']=Number_of_model_parameters.values
+
+# Build AIC-like Metric #
+#-----------------------#
+AIC_like = 2*((Model_Complexity_Metrics.N_par.values) - np.log(predictive_performance_test.MAE.values))
+AIC_like = np.round(AIC_like,3)
+Efficiency = np.log(Model_Complexity_Metrics.N_par.values) *predictive_performance_test.MAE.values
+Efficiency = np.round(Efficiency,3)
+
+
+# Update Training Metrics Dataframe #
+#-----------------------------------#
+Model_Complexity_Metrics['AIC_like'] = AIC_like
+Model_Complexity_Metrics['Eff'] = Efficiency
+
+# Write Required Training Time(s)
+Model_Complexity_Metrics.to_latex((results_tables_path+"Model_Complexity_Metrics.tex"))
+
+#--------------======---------------#
+# Display Required Training Time(s) #
+#--------------======---------------#
+print(Model_Complexity_Metrics)
+
+
 # # Summary
 
-# In[ ]:
+# In[49]:
 
 
 print(' ')
@@ -785,9 +896,9 @@ print(' PERFORMANCE SUMMARY:')
 print('#-------------------#')
 print(' ')
 print(' ')
-print('#-------------------#')
-print('Performance Metrics: ')
-print('#-------------------#')
+print('#===================#')
+print(' Individual Metrics: ')
+print('#======-============#')
 print(' ')
 print('----------------------------------------')
 print('----------------------------------------')
@@ -814,19 +925,43 @@ print('----------------------------------------')
 print('----------------------------------------')
 print(' ')
 print(' ')
-
-print('#-------------------#')
-print('Efficiency Metrics: ')
-print('#-------------------#')
+#
+print('#==================#')
+print(' Overview  Metrics : ')
+print('#==================#')
+print(' ')
+print('----------------------------------------')
+print('Training Performance: ')
+print('----------------------------------------')
+print(predictive_performance_training)
+print('----------------------------------------')
+print('Testing Performance: ')
+print('----------------------------------------')
+print(predictive_performance_test)
+print('----------------------------------------')
+print(' ')
+print(' ')
+#
+print('#====================#')
+print(' Efficiency Metrics: ')
+print('#====================#')
+print(' ')
 print('Model Training Times:')
 print('----------------------------------------')
-print('Model_Training_times')
-print('----------------------------------------')
+print(Model_Complexity_Metrics)
 print(' ')
 print(' ')
 print('😃😃 Have a great day!! 😃😃 ')
 
 
 # ---
+
+# ---
 # # Fin
+# ---
+
+# ---
+
+# ---
+
 # ---
