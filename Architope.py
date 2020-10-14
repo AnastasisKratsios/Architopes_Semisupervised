@@ -3,14 +3,13 @@
 
 # # Semi-Supervised Architope
 # ---
-# - This code Implements Algorithm 3.2 of the "Architopes" paper.
 
 # #### Mode: Code-Testin Parameter(s)
 
 # In[1]:
 
 
-trial_run = True
+trial_run = False
 
 
 # ### Meta-parameters
@@ -20,7 +19,7 @@ trial_run = True
 
 # Test-size Ratio
 test_size_ratio = 0.3
-min_height = 50
+min_height = 75
 
 
 # ### Hyperparameters
@@ -355,17 +354,17 @@ for current_part in range(len(X_parts_list)):
         # Training
         prediction_errors = np.abs(y_hat_train_loop.reshape(-1,)-y_train)
         training_quality = np.append(training_quality,prediction_errors.reshape(training_quality.shape[0],1),axis=1)
-
-    #============#
-    # Timer(end) #
-    #============#
-    current_part_training_time_for_parallel = time.time() - current_part_training_time_for_parallel_begin
-    Architope_partitioning_max_time_running = max(Architope_partitioning_max_time_running,current_part_training_time_for_parallel)
-
-    #============---===============#
-    # N_parameter Counter (Update) #
-    #------------===---------------#
-    N_params_Architope = N_params_Architope + N_params_Architope_loop
+        
+        #============#
+        # Timer(end) #
+        #============#
+        current_part_training_time_for_parallel = time.time() - current_part_training_time_for_parallel_begin
+        Architope_partitioning_max_time_running = max(Architope_partitioning_max_time_running,current_part_training_time_for_parallel)
+        
+        #============---===============#
+        # N_parameter Counter (Update) #
+        #------------===---------------#
+        N_params_Architope = N_params_Architope + N_params_Architope_loop
 
 # Update User
 #-------------#
@@ -380,7 +379,7 @@ print(' ')
 print(' ')
 
 
-# In[ ]:
+# In[13]:
 
 
 # Time-Elapsed Training on Each Part
@@ -394,14 +393,14 @@ Architope_partition_training = time.time() - Architope_partition_training_begin
 # #### Deep Classifier
 # Prepare Labels/Classes
 
-# In[ ]:
+# In[14]:
 
 
 # Time-Elapsed Training Deep Classifier
 Architope_deep_classifier_training_begin = time.time()
 
 
-# In[ ]:
+# In[15]:
 
 
 # Initialize Classes Labels
@@ -418,7 +417,7 @@ partition_labels_training = partition_labels_training+0
 
 # Re-Load Grid and Redefine Relevant Input/Output dimensions in dictionary.
 
-# In[ ]:
+# In[16]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -433,7 +432,7 @@ param_grid_Vanilla_Nets['output_dim'] = [partition_labels_training.shape[1]]
 
 # #### Train Model
 
-# In[ ]:
+# In[17]:
 
 
 # Train simple deep classifier
@@ -446,7 +445,7 @@ predicted_classes_train, predicted_classes_test, N_params_deep_classifier = buil
                                                                                                         X_test = X_test)
 
 
-# In[ ]:
+# In[18]:
 
 
 # Time-Elapsed Training Deep Classifier
@@ -455,7 +454,7 @@ Architope_deep_classifier_training = time.time() - Architope_deep_classifier_tra
 
 # Make Prediction(s)
 
-# In[ ]:
+# In[19]:
 
 
 # Training Set
@@ -468,7 +467,7 @@ Architope_prediction_y_test = np.take_along_axis(predictions_test, predicted_cla
 
 # Compute Performance
 
-# In[ ]:
+# In[20]:
 
 
 # Compute Peformance
@@ -497,14 +496,14 @@ print(performance_Architope)
 
 # #### Train Logistic Classifier (Benchmark)
 
-# In[ ]:
+# In[21]:
 
 
 # Time-Elapsed Training linear classifier
 Architope_logistic_classifier_training_begin = time.time()
 
 
-# In[ ]:
+# In[22]:
 
 
 parameters = {'penalty': ['none','l1', 'l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
@@ -518,7 +517,7 @@ partition_labels_training = np.argmin(training_quality,axis=-1)
 
 # #### Train Logistic Classifier
 
-# In[ ]:
+# In[23]:
 
 
 # Update User #
@@ -535,7 +534,7 @@ classifier.fit(X_train, partition_labels_training)
 
 # #### Write Predicted Class(es)
 
-# In[ ]:
+# In[24]:
 
 
 # Training Set
@@ -550,7 +549,7 @@ Architope_prediction_y_test_logistic_BM = np.take_along_axis(predictions_test, p
 N_params_best_logistic = (classifier.best_estimator_.coef_.shape[0])*(classifier.best_estimator_.coef_.shape[1]) + len(classifier.best_estimator_.intercept_)
 
 
-# In[ ]:
+# In[25]:
 
 
 # Time-Elapsed Training linear classifier
@@ -559,7 +558,7 @@ Architope_logistic_classifier_training = time.time() - Architope_logistic_classi
 
 # #### Compute Performance
 
-# In[ ]:
+# In[26]:
 
 
 # Compute Peformance
@@ -578,14 +577,14 @@ print(performance_architope_ffNN_logistic)
 
 # ## Bagged Feed-Forward Networks (ffNNs)
 
-# In[ ]:
+# In[27]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time_begin = time.time()
 
 
-# In[ ]:
+# In[28]:
 
 
 # Train Bagging Weights in-sample
@@ -599,14 +598,14 @@ bagged_prediction_test = bagging_coefficients.predict(predictions_test)
 N_bagged_parameters = len(bagging_coefficients.coef_) + 1
 
 
-# In[ ]:
+# In[29]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time = time.time() - Bagging_ffNN_bagging_time_begin
 
 
-# In[ ]:
+# In[30]:
 
 
 # Compute Peformance
@@ -622,7 +621,7 @@ print("Written Bagged Performance")
 print(performance_bagged_ffNN)
 
 
-# In[ ]:
+# In[31]:
 
 
 print("Random Partition: Generated!...Feature Generation Complete!")
@@ -632,7 +631,7 @@ print("Random Partition: Generated!...Feature Generation Complete!")
 
 # #### Reload Hyper-parameter Grid
 
-# In[ ]:
+# In[32]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -641,14 +640,14 @@ exec(open('Grid_Enhanced_Network.py').read())
 exec(open('Helper_Functions.py').read())
 
 
-# In[ ]:
+# In[33]:
 
 
 # Time for Bagging
 Vanilla_ffNN_time_beginn = time.time()
 
 
-# In[ ]:
+# In[34]:
 
 
 #X_train vanilla ffNNs
@@ -662,14 +661,14 @@ y_hat_train_Vanilla_ffNN, y_hat_test_Vanilla_ffNN, N_params_Vanilla_ffNN = build
                                                                                    X_test=X_test)
 
 
-# In[ ]:
+# In[35]:
 
 
 # Time for Bagging
 Vanilla_ffNN_time = time.time() - Vanilla_ffNN_time_beginn
 
 
-# In[ ]:
+# In[36]:
 
 
 # Update User #
@@ -679,7 +678,7 @@ print("Trained vanilla ffNNs")
 
 # #### Evaluate Performance
 
-# In[ ]:
+# In[37]:
 
 
 # Compute Peformance
@@ -695,7 +694,7 @@ print(performance_Vanilla_ffNN)
 
 # #### Compute Required Training Time(s)
 
-# In[ ]:
+# In[38]:
 
 
 # In-Line #
@@ -723,7 +722,7 @@ Bagged_ffNN_Time_parallel = partitioning_time + Architope_partitioning_max_time_
 
 # #### Write Required Training Times
 
-# In[ ]:
+# In[39]:
 
 
 # Update User #
@@ -754,7 +753,7 @@ print(Model_Training_times)
 
 # ## Run: Gradient Boosted Random Forest Regression
 
-# In[ ]:
+# In[40]:
 
 
 # Update User #
@@ -772,7 +771,7 @@ print('Training of Gradient-Boosted Random Forest: Complete!')
 
 # #### (Update) Write Required Training Times
 
-# In[ ]:
+# In[41]:
 
 
 # Update User #
@@ -807,7 +806,7 @@ print(Model_Training_times)
 # ### Prediction Metric(s)
 # #### Write Predictive Performance Dataframe(s)
 
-# In[ ]:
+# In[42]:
 
 
 # Write Training Performance
@@ -838,7 +837,7 @@ print(predictive_performance_training)
 
 # ### Model Complexity/Efficiency Metrics
 
-# In[ ]:
+# In[45]:
 
 
 # Compute Parameters for composite models #
@@ -887,7 +886,7 @@ print(Model_Complexity_Metrics)
 
 # # Summary
 
-# In[ ]:
+# In[49]:
 
 
 print(' ')
