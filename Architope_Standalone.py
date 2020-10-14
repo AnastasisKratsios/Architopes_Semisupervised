@@ -10,7 +10,7 @@
 # In[1]:
 
 
-trial_run = True
+trial_run = False
 
 
 # ### Meta-parameters
@@ -284,7 +284,7 @@ Architope_partitioning_max_time_running = -math.inf # Initialize slowest-time at
 N_params_Architope = 0
 
 
-# In[12]:
+# In[ ]:
 
 
 for current_part in range(len(X_parts_list)):
@@ -339,6 +339,8 @@ for current_part in range(len(X_parts_list)):
         predictions_train = predictions_train.reshape(predictions_train.shape[0],1)
         predictions_test = y_hat_test_full_loop
         predictions_test = predictions_test.reshape(predictions_test.shape[0],1)
+        
+        
     ## If not first prediction we append to already initialized dataframes
     else:
     # Register Best Scores
@@ -355,7 +357,7 @@ for current_part in range(len(X_parts_list)):
         # Training
         prediction_errors = np.abs(y_hat_train_loop.reshape(-1,)-y_train)
         training_quality = np.append(training_quality,prediction_errors.reshape(training_quality.shape[0],1),axis=1)
-
+        
     #============#
     # Timer(end) #
     #============#
@@ -427,8 +429,8 @@ exec(open('Grid_Enhanced_Network.py').read())
 exec(open('Helper_Functions.py').read())
 
 # Redefine (Dimension-related) Elements of Grid
-param_grid_Vanilla_Nets['input_dim'] = [X_train.shape[1]]
-param_grid_Vanilla_Nets['output_dim'] = [partition_labels_training.shape[1]]
+param_grid_Deep_Classifier['input_dim'] = [X_train.shape[1]]
+param_grid_Deep_Classifier['output_dim'] = [partition_labels_training.shape[1]]
 
 
 # #### Train Model
@@ -440,7 +442,7 @@ param_grid_Vanilla_Nets['output_dim'] = [partition_labels_training.shape[1]]
 predicted_classes_train, predicted_classes_test, N_params_deep_classifier = build_simple_deep_classifier(n_folds = CV_folds, 
                                                                                                         n_jobs = n_jobs, 
                                                                                                         n_iter =n_iter, 
-                                                                                                        param_grid_in=param_grid_Vanilla_Nets, 
+                                                                                                        param_grid_in=param_grid_Deep_Classifier, 
                                                                                                         X_train = X_train, 
                                                                                                         y_train = partition_labels_training,
                                                                                                         X_test = X_test)
@@ -487,354 +489,7 @@ print(performance_Architope)
 
 # ---
 
-# # Benchmarks
-
 # ---
-
-# ---
-
-# ### Architope with Logistic-Classifier Partitioning
-
-# #### Train Logistic Classifier (Benchmark)
-
-# In[ ]:
-
-
-# Time-Elapsed Training linear classifier
-Architope_logistic_classifier_training_begin = time.time()
-
-
-# In[ ]:
-
-
-parameters = {'penalty': ['none','l1', 'l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
-lr = LogisticRegression(random_state=2020)
-cv = RepeatedStratifiedKFold(n_splits=CV_folds, n_repeats=n_iter, random_state=0)
-classifier = RandomizedSearchCV(lr, parameters, random_state=2020)
-
-# Initialize Classes Labels
-partition_labels_training = np.argmin(training_quality,axis=-1)
-
-
-# #### Train Logistic Classifier
-
-# In[ ]:
-
-
-# Update User #
-#-------------#
-print("Training classifier and generating partition!")
-
-# Train Logistic Classifier #
-#---------------------------#
-# Supress warnings caused by "ignoring C" for 'none' penalty and similar obvious warnings
-warnings.simplefilter("ignore")
-# Train Classifier
-classifier.fit(X_train, partition_labels_training)
-
-
-# #### Write Predicted Class(es)
-
-# In[ ]:
-
-
-# Training Set
-predicted_classes_train_logistic_BM = classifier.best_estimator_.predict(X_train)
-Architope_prediction_y_train_logistic_BM = np.take_along_axis(predictions_train, predicted_classes_train_logistic_BM[:,None], axis=1)
-
-# Testing Set
-predicted_classes_test_logistic_BM = classifier.best_estimator_.predict(X_test)
-Architope_prediction_y_test_logistic_BM = np.take_along_axis(predictions_test, predicted_classes_test_logistic_BM[:,None], axis=1)
-
-# Extract Number of Parameters Logistic Regressor
-N_params_best_logistic = (classifier.best_estimator_.coef_.shape[0])*(classifier.best_estimator_.coef_.shape[1]) + len(classifier.best_estimator_.intercept_)
-
-
-# In[ ]:
-
-
-# Time-Elapsed Training linear classifier
-Architope_logistic_classifier_training = time.time() - Architope_logistic_classifier_training_begin
-
-
-# #### Compute Performance
-
-# In[ ]:
-
-
-# Compute Peformance
-performance_architope_ffNN_logistic = reporter(y_train_hat_in=Architope_prediction_y_train_logistic_BM,
-                                    y_test_hat_in=Architope_prediction_y_test_logistic_BM,
-                                    y_train_in=y_train,
-                                    y_test_in=y_test)
-# Write Performance
-performance_architope_ffNN_logistic.to_latex((results_tables_path+"Architopes_logistic_performance.tex"))
-
-# Update User
-print(performance_architope_ffNN_logistic)
-
-
-# ---
-
-# ## Bagged Feed-Forward Networks (ffNNs)
-
-# In[ ]:
-
-
-# Time for Bagging
-Bagging_ffNN_bagging_time_begin = time.time()
-
-
-# In[ ]:
-
-
-# Train Bagging Weights in-sample
-bagging_coefficients = LinearRegression().fit(predictions_train,y_train)
-
-# Predict Bagging Weights out-of-sample
-bagged_prediction_train = bagging_coefficients.predict(predictions_train)
-bagged_prediction_test = bagging_coefficients.predict(predictions_test)
-
-# Write number of trainable bagging parameters
-N_bagged_parameters = len(bagging_coefficients.coef_) + 1
-
-
-# In[ ]:
-
-
-# Time for Bagging
-Bagging_ffNN_bagging_time = time.time() - Bagging_ffNN_bagging_time_begin
-
-
-# In[ ]:
-
-
-# Compute Peformance
-performance_bagged_ffNN = reporter(y_train_hat_in=bagged_prediction_train,
-                                    y_test_hat_in=bagged_prediction_test,
-                                    y_train_in=y_train,
-                                    y_test_in=y_test)
-# Write Performance
-performance_bagged_ffNN.to_latex((results_tables_path+"ffNN_Bagged.tex"))
-
-# Update User
-print("Written Bagged Performance")
-print(performance_bagged_ffNN)
-
-
-# In[ ]:
-
-
-print("Random Partition: Generated!...Feature Generation Complete!")
-
-
-# ## Vanilla ffNN
-
-# #### Reload Hyper-parameter Grid
-
-# In[ ]:
-
-
-# Re-Load Hyper-parameter Grid
-exec(open('Grid_Enhanced_Network.py').read())
-# Re-Load Helper Function(s)
-exec(open('Helper_Functions.py').read())
-
-
-# In[ ]:
-
-
-# Time for Bagging
-Vanilla_ffNN_time_beginn = time.time()
-
-
-# In[ ]:
-
-
-#X_train vanilla ffNNs
-y_hat_train_Vanilla_ffNN, y_hat_test_Vanilla_ffNN, N_params_Vanilla_ffNN = build_ffNN(n_folds = CV_folds_failsafe, 
-                                                                                   n_jobs = n_jobs, 
-                                                                                   n_iter = n_iter, 
-                                                                                   param_grid_in = param_grid_Vanilla_Nets, 
-                                                                                   X_train=X_train, 
-                                                                                   y_train=y_train, 
-                                                                                   X_test_partial=X_train,
-                                                                                   X_test=X_test)
-
-
-# In[ ]:
-
-
-# Time for Bagging
-Vanilla_ffNN_time = time.time() - Vanilla_ffNN_time_beginn
-
-
-# In[ ]:
-
-
-# Update User #
-#-------------#
-print("Trained vanilla ffNNs")
-
-
-# #### Evaluate Performance
-
-# In[ ]:
-
-
-# Compute Peformance
-performance_Vanilla_ffNN = reporter(y_train_hat_in=y_hat_train_Vanilla_ffNN,y_test_hat_in=y_hat_test_Vanilla_ffNN,y_train_in=y_train,y_test_in=y_test)
-# Write Performance
-performance_Vanilla_ffNN.to_latex((results_tables_path+"ffNN_Vanilla.tex"))
-
-# Update User #
-#-------------#
-print("Written Bagged Vanilla ffNNs")
-print(performance_Vanilla_ffNN)
-
-
-# #### Compute Required Training Time(s)
-
-# In[ ]:
-
-
-# In-Line #
-#---------#
-
-# Architope (Full) Time Lapse
-Architope_Full_Time = partitioning_time + Architope_partition_training + Architope_deep_classifier_training
-# Architope (Logistic) Time Lapse
-Architope_logistic_Time = partitioning_time + Architope_partition_training + Architope_logistic_classifier_training
-# Bagged ffNN Training Time
-Bagged_ffNN_Time = partitioning_time + Architope_partition_training + Bagging_ffNN_bagging_time
-# Vanilla ffNN
-Vanilla_ffNN_Time = Vanilla_ffNN_time
-
-# Parallel (Only if applicable) #
-#-------------------------------#
-
-# Architope (Full) Time Lapse
-Architope_Full_Time_parallel = partitioning_time + Architope_partitioning_max_time_running + Architope_deep_classifier_training
-# Architope (Logistic) Time Lapse
-Architope_logistic_Time_parallel = partitioning_time + Architope_partitioning_max_time_running + Architope_logistic_classifier_training
-# Bagged ffNN Training Time
-Bagged_ffNN_Time_parallel = partitioning_time + Architope_partitioning_max_time_running + Bagging_ffNN_bagging_time
-
-
-# #### Write Required Training Times
-
-# In[ ]:
-
-
-# Update User #
-#-------------#
-print('Writing preliminary table: Required Training Times')
-
-# Format Required Training Time(s)
-training_times_In_Line = pd.DataFrame({'Architope': [round(Architope_Full_Time,3)],
-                                'Architope-logistic': [round(Architope_logistic_Time,3)],
-                                'Vanilla ffNN': [round(Vanilla_ffNN_Time,3)],
-                                'Bagged ffNN': [round(Bagged_ffNN_Time,3)]})
-training_times_Parallel = pd.DataFrame({'Architope': [round(Architope_Full_Time_parallel,3)],
-                                'Architope-logistic': [round(Architope_logistic_Time_parallel,3)],
-                                'Vanilla ffNN': ['-'],
-                                'Bagged ffNN': [round(Bagged_ffNN_Time_parallel,3)]})
-
-# Combine Training Times into Single Data-Frame #
-#-----------------------------------------------#
-Model_Training_times = training_times_In_Line.append(training_times_Parallel)
-
-# Write Required Training Time(s)
-Model_Training_times.to_latex((results_tables_path+"Model_Training_Times.tex"))
-# Display Required Training Time(s)
-print(Model_Training_times)
-
-
-# ---
-
-# ## Run: Gradient Boosted Random Forest Regression
-
-# In[ ]:
-
-
-# Update User #
-#-------------#
-print('Training Gradient-Boosted Random Forest: In-progress...')
-# Run from External Script
-exec(open('Gradient_Boosted_Random_Forest_Regressor.py').read())
-
-# Update User #
-#-------------#
-print('Training of Gradient-Boosted Random Forest: Complete!')
-
-
-# ## Training Result(s)
-
-# #### (Update) Write Required Training Times
-
-# In[ ]:
-
-
-# Update User #
-#-------------#
-print('Completing Table: Required Training Times')
-
-# Format Required Training Time(s)
-training_times_In_Line = pd.DataFrame({'Vanilla ffNN': [round(Vanilla_ffNN_Time,3)],
-                                       'Grad.Bstd Rand.F': [round(Gradient_boosted_Random_forest_time,3)],
-                                       'Bagged ffNN': [round(Bagged_ffNN_Time,3)],
-                                       'Architope-logistic': [round(Architope_logistic_Time,3)],
-                                       'Architope': [round(Architope_Full_Time,3)]
-                                      },index=['In-Line (L-Time)'])
-
-training_times_Parallel = pd.DataFrame({'Vanilla ffNN': ['-'],
-                                        'Grad.Bstd Rand.F': ['-'],
-                                        'Bagged ffNN': [round(Bagged_ffNN_Time_parallel,3)],
-                                        'Architope-logistic': [round(Architope_logistic_Time_parallel,3)],
-                                        'Architope': [round(Architope_Full_Time_parallel,3)]},index=['Parallel (P-Time)'])
-
-# Combine Training Times into Single Data-Frame #
-#-----------------------------------------------#
-Model_Training_times = training_times_In_Line.append(training_times_Parallel)
-Model_Training_times = Model_Training_times.transpose()
-
-# Write Required Training Time(s)
-Model_Training_times.to_latex((results_tables_path+"Model_Training_Times.tex"))
-# Display Required Training Time(s)
-print(Model_Training_times)
-
-
-# ### Prediction Metric(s)
-# #### Write Predictive Performance Dataframe(s)
-
-# In[ ]:
-
-
-# Write Training Performance
-predictive_performance_training = pd.DataFrame({'ffNN': performance_Vanilla_ffNN.train,
-                                                'GBRF': Gradient_boosted_tree.train,
-                                                'ffNN-bag': performance_bagged_ffNN.train,
-                                                'ffNN-lgt': performance_architope_ffNN_logistic.train,
-                                                'tope': performance_Architope.train})
-predictive_performance_training = predictive_performance_training.transpose()
-
-# Write Testing Performance
-predictive_performance_test = pd.DataFrame({'ffNN': performance_Vanilla_ffNN.test,
-                                            'GBRF': Gradient_boosted_tree.test,
-                                            'ffNN-bag': performance_bagged_ffNN.test,
-                                            'ffNN-lgt': performance_architope_ffNN_logistic.test,
-                                            'tope': performance_Architope.test})
-predictive_performance_test = predictive_performance_test.transpose()
-
-# Write into one Dataframe #
-#--------------------------#
-predictive_performance_training.to_latex((results_tables_path+"Models_predictive_performance_training.tex"))
-predictive_performance_test.to_latex((results_tables_path+"Models_predictive_performance_testing.tex"))
-
-# Update User #
-#-------------#
-print(predictive_performance_training)
-
 
 # ### Model Complexity/Efficiency Metrics
 
@@ -844,45 +499,31 @@ print(predictive_performance_training)
 # Compute Parameters for composite models #
 #-----------------------------------------#
 N_params_Architope_full = N_params_Architope + N_params_deep_classifier
-N_params_Architope_logistic = N_params_Architope + N_params_best_logistic
-N_params_bagged_ffNN = N_params_Architope + N_bagged_parameters
-
-# Build Table #
-#-------------#
-Number_of_model_parameters = pd.DataFrame({'Vanilla ffNN': [N_params_Vanilla_ffNN],
-                                           'Grad.Bstd Rand.F': [N_tot_params_in_forest],
-                                           'Bagged ffNN': [N_params_bagged_ffNN],
-                                           'Architope-logistic': [N_params_Architope_logistic],
-                                           'Architope': [N_params_Architope_full]},
-                                            index=['N_par'])
-
-Number_of_model_parameters = Number_of_model_parameters.transpose()
-
-# Append to Dataframe #
-#---------------------#
-Model_Complexity_Metrics = Model_Training_times
-Model_Complexity_Metrics['N_par']=Number_of_model_parameters.values
 
 # Build AIC-like Metric #
 #-----------------------#
-AIC_like = 2*((Model_Complexity_Metrics.N_par.values) - np.log(predictive_performance_test.MAE.values))
+AIC_like = 2*(N_params_Architope_full - np.log((performance_Architope['test']['MAE'])))
 AIC_like = np.round(AIC_like,3)
-Efficiency = np.log(Model_Complexity_Metrics.N_par.values) *predictive_performance_test.MAE.values
+Efficiency = np.log(N_params_Architope_full) *(performance_Architope['test']['MAE'])
 Efficiency = np.round(Efficiency,3)
 
 
-# Update Training Metrics Dataframe #
-#-----------------------------------#
-Model_Complexity_Metrics['AIC_like'] = AIC_like
-Model_Complexity_Metrics['Eff'] = Efficiency
+# Build Table #
+#-------------#
+Architope_Model_Complexity_full = pd.DataFrame({'L-time': [Architope_partition_training],
+                                                  'P-time':[Architope_partitioning_max_time_running],
+                                                  'N_params_expt': [N_params_Architope_full],
+                                                  'AIC-like': [AIC_like],
+                                                  'Eff': [Efficiency]})
+
 
 # Write Required Training Time(s)
-Model_Complexity_Metrics.to_latex((results_tables_path+"Model_Complexity_Metrics.tex"))
+Architope_Model_Complexity_full.to_latex((results_tables_path+"Architope_full_model_complexities.tex"))
 
 #--------------======---------------#
 # Display Required Training Time(s) #
 #--------------======---------------#
-print(Model_Complexity_Metrics)
+print(Architope_Model_Complexity_full)
 
 
 # # Summary
@@ -891,78 +532,24 @@ print(Model_Complexity_Metrics)
 
 
 print(' ')
+print('#===============#')
+print('# Model Summary #')
+print('#===============#')
 print(' ')
-print('#-------------------#')
-print(' PERFORMANCE SUMMARY:')
-print('#-------------------#')
-print(' ')
-print(' ')
-print('#===================#')
-print(' Individual Metrics: ')
-print('#======-============#')
-print(' ')
-print('----------------------------------------')
-print('----------------------------------------')
-print('Architope (Full)')
-print('----------------------------------------')
+print('---------------------------------------------')
+print('Model Performance: Semi-Supervised Architope')
+print('---------------------------------------------')
 print(performance_Architope)
-print('----------------------------------------')
-print('Architope - Naive Logistic')
-print('----------------------------------------')
-print(performance_architope_ffNN_logistic)
-print('----------------------------------------')
-print('Vanilla ffNN')
-print('----------------------------------------')
-print(performance_Vanilla_ffNN)
-print('----------------------------------------')
-print('Bagged ffNN')
-print('----------------------------------------')
-print(performance_bagged_ffNN)
-print('----------------------------------------')
-print('Gradient Boosted Random Forest Regressor')
-print('----------------------------------------')
-print(Gradient_boosted_tree)
-print('----------------------------------------')
-print('----------------------------------------')
+print(' ')
+print('--------------------------------------------')
+print('Model Complexity: Semi-Supervised Architope')
+print('--------------------------------------------')
+print(Architope_Model_Complexity_full)
 print(' ')
 print(' ')
-#
-print('#==================#')
-print(' Overview  Metrics : ')
-print('#==================#')
-print(' ')
-print('----------------------------------------')
-print('Training Performance: ')
-print('----------------------------------------')
-print(predictive_performance_training)
-print('----------------------------------------')
-print('Testing Performance: ')
-print('----------------------------------------')
-print(predictive_performance_test)
-print('----------------------------------------')
-print(' ')
-print(' ')
-#
-print('#====================#')
-print(' Efficiency Metrics: ')
-print('#====================#')
-print(' ')
-print('Model Training Times:')
-print('----------------------------------------')
-print(Model_Complexity_Metrics)
-print(' ')
-print(' ')
-print('😃😃 Have a great day!! 😃😃 ')
+print('😃😃 Have a wonderful day!! 😃😃')
 
-
-# ---
 
 # ---
 # # Fin
-# ---
-
-# ---
-
-# ---
-
 # ---

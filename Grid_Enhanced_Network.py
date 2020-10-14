@@ -1,4 +1,4 @@
-trial_run = True
+trial_run = False
 # This one is with larger height
 
 # This file contains the hyper-parameter grids used to train the imprinted-tree nets.
@@ -35,6 +35,16 @@ if trial_run == True:
                        'depth': [1],
                       'input_dim':[15],
                        'output_dim':[1]}
+
+    param_grid_Deep_Classifier = {'batch_size': [8],
+                        'epochs': [2],
+                        'learning_rate': [0.01],
+                        'height': [4],
+                        'depth': [2],
+                        'input_dim':[15],
+                        'output_dim':[1]}
+
+                       
     # Random Forest Grid
     #--------------------#
     Rand_Forest_Grid = {'learning_rate': [0.1],
@@ -65,6 +75,15 @@ else:
                            'depth': [1,2],
                           'input_dim':[15],
                            'output_dim':[1]}
+
+    param_grid_Deep_Classifier = {'batch_size': [16,32,64],
+                        'epochs': [200, 400, 800, 1000, 1200, 1400],
+                        'learning_rate': [0.0001,0.0005,0.005, 0.01],
+                        'height': [100,200, 400, 500,600],
+                        'depth': [1,2,3,4],
+                        'input_dim':[15],
+                        'output_dim':[1]}
+                           
     # Random Forest Grid
     #--------------------#
     Rand_Forest_Grid = {'learning_rate': [0.0001,0.0005,0.005, 0.01],
