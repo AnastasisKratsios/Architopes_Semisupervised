@@ -10,7 +10,7 @@
 # In[1]:
 
 
-trial_run = False
+trial_run = True
 
 
 # ### Meta-parameters
