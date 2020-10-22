@@ -89,32 +89,33 @@ The house prices were multiplied by $10^{-5}$ to avoid exploding gradient issues
 | 1400 | - | - | - | - |
 		
 ### For deep classifiers (sub-models)
-	| Epochs | Batch Size | Learning Rate | Height | Depth |
-	| 200 |	16 | 0.0001 |    100 | 1|
-	| 400 |	32 | 0.0005 |    200  | 2|
-	| 800 |	64 | 0.005 |     400  | 3|
-	| 1000 |	- | 0.01 |    500 | 4|
-	| 1200 |	- | - |    600 | -|
-	| 1400 | - | - | - | -|
+| Epochs | Batch Size | Learning Rate | Height | Depth |
+| - | - | - | - | - |
+| 200 |	16 | 0.0001 |    100 | 1|
+| 400 |	32 | 0.0005 |    200  | 2|
+| 800 |	64 | 0.005 |     400  | 3|
+| 1000 |	- | 0.01 |    500 | 4|
+| 1200 |	- | - |    600 | -|
+| 1400 | - | - | - | -|
 
 ### For GBRF model
-		|Maximum Depth | Minimum Sample Leaves | Learning Rate | Number of Estimators |
-  | - | -| -| -|
-		|	1 |	1 | 0.0001 |    0.0001 | 5|
-		|	2 |	2 | 0.0005 |    0.0005 | 10 |
-		|	3 |	3 | 0.005 |     0.005 | 25 |
-		|	4 |	4 | 0.01 |    0.01 | 50|
-		|	5 |	5 | - |  - | 100 |
-		|	7 | 9 | - | - | 200 |
-		|	10 | 17 |  - | 250 |
-		|	25 | 20 |  - | - |
-		|	50 | 50 | - | - |
-		|	75 | 75 | - | - |
-		|	100 | 100 | - | - |
-	|		200 | - | - | - |
-	|	300 | - | - | - |
-	|	500 | - | - | - |
-	| - | -|-|-|
+|Maximum Depth | Minimum Sample Leaves | Learning Rate | Number of Estimators |
+| - | -| -| -|
+|	1 |	1 | 0.0001 |    0.0001 | 5|
+|	2 |	2 | 0.0005 |    0.0005 | 10 |
+|	3 |	3 | 0.005 |     0.005 | 25 |
+|	4 |	4 | 0.01 |    0.01 | 50|
+|	5 |	5 | - |  - | 100 |
+|	7 | 9 | - | - | 200 |
+|	10 | 17 |  - | 250 |
+|	25 | 20 |  - | - |
+|	50 | 50 | - | - |
+|	75 | 75 | - | - |
+|	100 | 100 | - | - |
+|		200 | - | - | - |
+|	300 | - | - | - |
+|	500 | - | - | - |
+| - | -|-|-|
  
 #### Meta-parameters Used in Cross-Validation:
 - n_jobs = 70 (Number of cores used in training).
