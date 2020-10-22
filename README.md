@@ -56,19 +56,19 @@ The house prices were multiplied by $10^{-5}$ to avoid exploding gradient issues
 
 
 ---
-Hyperparameter Grid Used in Training for the paper ["Non-Euclidean Universal Approximation"](https://arxiv.org/abs/2006.02341)
+Hyperparameter Grid Used in Training.  
 
-| Batch size | Epochs | Learning Rate | Height (Middle Layers) | Depth - Input Layers | Depth - Middle Layers | Depth - Output Layers |
-|------------|--------|---------------|------------------------|----------------------|-----------------------|-----------------------|
-|     16     |  200   |    0.0001     |         200            |          2           |           1           |            2          |
-|      32    |  400   |    0.0005     |         250            |          3           |           2           |            3          |
-|     -      |  800   |    0.005      |         400            |          4           |           -           |            4          |
-|     -      |  1000  |      -        |         600            |          5           |           -           |            5          |
-|     -      |  1200  |      -        |         800            |          -           |           -           |            -          |
-|     -      |  -     |      -        |        1000            |          -           |           -           |            -          |
+| In-Line (L-Time) | Parallel (P-Time) |    Number of Parameters Required |      AIC-like |    Eff(†) |
+| - | -| -| -| -|
+| Vanilla ffNN       |          9284.53 |                 - |    370801 |  7.416043e+05 |  4.121 |
+| Grad.Bstd Rand.F   |            59.23 |                 - |  17729040 |  3.545808e+07 |  5.781 |
+| Bagged ffNN        |          6361.83 |           2886.82 |     28250 |  5.650140e+04 |  5.083 |
+| Architope-logistic |          6371.71 |           2896.71 |     28324 |  5.665029e+04 |  3.267 |
+| Architope          |          12757.4 |           9282.36 |     30349 |  6.070032e+04 |  3.228 |
 
+(†) Eff is a non-standard metric, not included in the final paper.  It is defined by N_parameters x log(Test-set-MAE)
 
 ### Meta-parameters Used:
 - n_jobs = 70 (Number of cores used in training).
-- n_iter = 10 (The number of cross-validation iterations used/per model when performing the grid-search).
-- CV_folds = 4 (The number of cross-validation folds used).
+- n_iter = 50 (The number of cross-validation iterations used/per model when performing the grid-search).
+- n_folds = 4 (The number of cross-validation folds used).
