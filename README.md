@@ -44,7 +44,7 @@ Our models and their benchmarks achieves the following performance on:
 
 The house prices were multiplied by $10^{-5}$ to avoid exploding gradient issues.
 
-1. For Testing:
+#### Test-set performance:
 
 |Model |  MAE |       MSE |       MAPE |
 |-|-|-|-|
@@ -52,11 +52,14 @@ The house prices were multiplied by $10^{-5}$ to avoid exploding gradient issues
 | GBRF     |  0.346361 |  0.259093 |  17.985115 |
 | ffNN-bag |  0.495927 |  0.461367 |  29.052931 |
 | ffNN-lgt |  0.318711 |  0.257818 |  19.901575 |
+| - | -| -| -| -|
 | Architope     |  0.312752 |  0.249929 |  17.689563 |
+| Architope Expert | 0.317560 | 0.256397 | 17.917502 |
+| Architope Expert + Repartitioning | 0.317194 | 0.257047 | 17.508693 |
 
 
 ---
-Hyperparameter Grid Used in Training.  
+#### Model Complexity Results:
 
 | In-Line (L-Time) | Parallel (P-Time) |    Number of Parameters Required |      AIC-like |    Eff(†) |
 | - | -| -| -| -|
@@ -64,7 +67,10 @@ Hyperparameter Grid Used in Training.
 | Grad.Bstd Rand.F   |            59.23 |                 - |  17729040 |  3.545808e+07 |  5.781 |
 | Bagged ffNN        |          6361.83 |           2886.82 |     28250 |  5.650140e+04 |  5.083 |
 | Architope-logistic |          6371.71 |           2896.71 |     28324 |  5.665029e+04 |  3.267 |
+| - | -| -| -| -|
 | Architope          |          12757.4 |           9282.36 |     30349 |  6.070032e+04 |  3.228 |
+| Architope-Expert | 8453.926916 |  4117.519696 |          83731 |  167464.294 |  3.6 |
+| Architope-Expert + Repartitioning |  15811.70576 |  6596.203372 |          13604 |  27210.296 |  3.019 |
 
 (†) Eff is a non-standard metric, not included in the final paper.  It is defined by N_parameters x log(Test-set-MAE)
 
