@@ -79,7 +79,8 @@ The house prices were multiplied by $10^{-5}$ to avoid exploding gradient issues
 ## Grid of Hyperparameters
 
 ### For feed-forward models/sub-models
-	|Epochs | Batch Size |  Learning Rate | Height | Depth |
+|Epochs | Batch Size |  Learning Rate | Height | Depth |
+| - | - | - | - | - |
 | 200 |	16 | 0.0001 |    100 | 1|
 | 400 |	32 | 0.0005 |    200  | 2
 | 800 |	64 | 0.005 |     400  | -|
