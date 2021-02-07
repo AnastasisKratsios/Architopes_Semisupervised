@@ -120,4 +120,4 @@ The house prices were multiplied by $10^{-5}$ to avoid exploding gradient issues
 #### Meta-parameters Used in Cross-Validation:
 - n_jobs = 70 (Number of cores used in training).
 - n_iter = 50 (The number of cross-validation iterations used/per model when performing the grid-search).
-- n_folds = 4 (The number of cross-validation folds used).
+- n_folds = 4 (The number of cross-validation folds used). 
