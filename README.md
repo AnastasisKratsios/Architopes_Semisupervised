@@ -1,5 +1,5 @@
 # Implementations for: Overcoming The Limitations of Neural Networks in Composite-Pattern Learning with Architopes
-**Submitted to:** *The 24th International Conference on Artificial Intelligence and Statistics*
+**Submitted to:** *Thirty-eighth International Conference on Machine Learning*
 
 ---
 
