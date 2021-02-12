@@ -32,7 +32,7 @@ python3.8 Architope.py
 python3.8 Architope_Expert.py
 python3.8 Architope_Expert_Semi_Supervised_Standalone.py
 
-The first trains the semi-supervised architope model and the following benchmark modelds: ffNN, GBRF, ffNN-bag, and ffNN-lgt.  The subsequent two scripts, respectively, train the architope on the expert-provided partition described [here](https://github.com/ageron/handson-ml/tree/master/datasets/housing.) and architope obtained from an additional repartitioning step, as described by Algorithm 3.2 of the paper.  
+The first trains the semi-supervised architope model and the following benchmark modelds: ffNN, GBRF, ffNN-bag, and ffNN-lgt.  The subsequent two scripts, respectively, train the architope on the expert-provided partition described [here](https://github.com/ageron/handson-ml/tree/master/datasets/housing) and architope obtained from an additional repartitioning step, as described by Algorithm 3.2 of the paper.  
 
 ---
 
