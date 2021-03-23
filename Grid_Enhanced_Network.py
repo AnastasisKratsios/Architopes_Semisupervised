@@ -1,6 +1,6 @@
 # Which financial dataset do you want to consider (NB this meta-parameter does not impact the non-financial architopes module)
 # Options: SnP or crypto
-Option_Function = "crypto"
+Option_Function = "SnP"
 
 # Is this a trial run (to test hardware?)
 trial_run = True

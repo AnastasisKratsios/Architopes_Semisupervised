@@ -150,7 +150,7 @@ Train_step_proportion = test_size_ratio
 #------------------------#
 # Run External Notebooks #
 #------------------------#
-if Option_Function == "SnP":
+if Option_Function == "SnP" or "AAPL":
     #--------------#
     # Get S&P Data #
     #--------------#
@@ -181,12 +181,13 @@ if Option_Function == "SnP":
     snp_data = (snp_data.tail(600)).dropna(axis=1).fillna(0)
     
     # Apple
-    snp_index_target_data = snp_data[{'AAPL'}]
-    snp_data = snp_data[{'IBM','QCOM','MSFT','CSCO','ADI','MU','MCHP','NVR','NVDA','GOOGL','GOOG'}]
-    # Get Return(s)
-    snp_data_returns = snp_data.diff().iloc[1:]
-    snp_index_target_data_returns = snp_index_target_data.diff().iloc[1:]
-    #--------------------------------------------------------#
+    if Option_Function == "AAPL":
+        snp_index_target_data = snp_data[{'AAPL'}]
+        snp_data = snp_data[{'IBM','QCOM','MSFT','CSCO','ADI','MU','MCHP','NVR','NVDA','GOOGL','GOOG'}]
+        # Get Return(s)
+        snp_data_returns = snp_data.diff().iloc[1:]
+        snp_index_target_data_returns = snp_index_target_data.diff().iloc[1:]
+        #--------------------------------------------------------#
     
     #-------------#
     # Subset Data #
