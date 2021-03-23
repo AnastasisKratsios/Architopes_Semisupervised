@@ -1,3 +1,8 @@
+# Which financial dataset do you want to consider (NB this meta-parameter does not impact the non-financial architopes module)
+# Options: SnP or crypto
+Option_Function = "crypto"
+
+# Is this a trial run (to test hardware?)
 trial_run = True
 # This one is with larger height
 
@@ -28,16 +33,16 @@ if trial_run == True:
     
     # Model Parameters
     #------------------#
-    param_grid_Vanilla_Nets = {'batch_size': [8],
-                    'epochs': [2],
-                      'learning_rate': [0.14],
-                      'height': [2],
-                       'depth': [1],
+    param_grid_Vanilla_Nets = {'batch_size': [16],
+                    'epochs': [100],
+                      'learning_rate': [0.00014],
+                      'height': [100],
+                       'depth': [2],
                       'input_dim':[15],
                        'output_dim':[1]}
 
-    param_grid_Deep_Classifier = {'batch_size': [8],
-                        'epochs': [2],
+    param_grid_Deep_Classifier = {'batch_size': [16],
+                        'epochs': [50],
                         'learning_rate': [0.01],
                         'height': [4],
                         'depth': [2],
