@@ -10,7 +10,7 @@
 # In[1]:
 
 
-trial_run = True
+# trial_run = True
 
 
 # ### Meta-parameters
@@ -19,8 +19,8 @@ trial_run = True
 
 
 # Test-size Ratio
-test_size_ratio = 0.95
-min_height = 100
+test_size_ratio = 0.90
+min_height = 50
 
 
 # ### Hyperparameters
@@ -54,6 +54,15 @@ exec(open('Financial_Data_Preprocessor.py').read())
 import time
 
 
+# ### Set Seed
+
+# In[5]:
+
+
+random.seed(2021)
+tf.random.set_seed(2021)
+
+
 # #### Pre-Process:
 # - Convert Categorical Variables to Dummies
 # - Remove Bad Column
@@ -82,7 +91,7 @@ import time
 
 # ## Define Random Partition Builder
 
-# In[5]:
+# In[6]:
 
 
 from scipy.spatial import distance_matrix
@@ -90,7 +99,7 @@ from scipy.spatial import distance_matrix
 
 # Here we use $\Delta_{in} = Q_{q}\left(\Delta(\mathbb{X})\right)$ where $\Delta(\mathbb{X})$ is the vector of (Euclidean) distances between the given data-points, $q \in (0,1)$ is a hyper-parameter, and $Q$ is the empirical quantile function.
 
-# In[6]:
+# In[7]:
 
 
 def Random_Lipschitz_Partioner(Min_data_size_percentage,q_in, X_train_in,y_train_in, CV_folds_failsafe, min_size):
@@ -242,14 +251,14 @@ def Random_Lipschitz_Partioner(Min_data_size_percentage,q_in, X_train_in,y_train
 
 # # Apply Random Partitioner to the given Dataset
 
-# In[7]:
+# In[8]:
 
 
 import time
 partitioning_time_begin = time.time()
 
 
-# In[8]:
+# In[9]:
 
 
 if Option_Function == 'SnP':
@@ -264,7 +273,7 @@ else:
         Min_data_size_percentage_auto = .3
 
 
-# In[9]:
+# In[10]:
 
 
 # Initialize Number of Parts currently generated
@@ -290,13 +299,13 @@ while N_parts_generated < 2:
     print('The_parts_listhe number of parts are: ' + str(len(X_parts_list))+'.')
 
 
-# In[10]:
+# In[11]:
 
 
 partitioning_time = time.time() - partitioning_time_begin
 
 
-# In[11]:
+# In[12]:
 
 
 print('The_parts_listhe number of parts are: ' + str(len(X_parts_list))+'.')
@@ -307,7 +316,7 @@ print('The_parts_listhe number of parts are: ' + str(len(X_parts_list))+'.')
 # - Generate predictions for (full) training and testings sets respectively, to be used in training the classifer and for prediction, respectively.  
 # - Generate predictions on all of testing-set (will be selected between later using classifier)
 
-# In[12]:
+# In[13]:
 
 
 # Time-Elapse (Start) for Training on Each Part
@@ -318,7 +327,7 @@ Architope_partitioning_max_time_running = -math.inf # Initialize slowest-time at
 N_params_Architope = 0
 
 
-# In[13]:
+# In[14]:
 
 
 for current_part in range(len(X_parts_list)):
@@ -416,7 +425,7 @@ print(' ')
 print(' ')
 
 
-# In[14]:
+# In[15]:
 
 
 # Time-Elapsed Training on Each Part
@@ -430,14 +439,14 @@ Architope_partition_training = time.time() - Architope_partition_training_begin
 # #### Deep Classifier
 # Prepare Labels/Classes
 
-# In[15]:
+# In[16]:
 
 
 # Time-Elapsed Training Deep Classifier
 Architope_deep_classifier_training_begin = time.time()
 
 
-# In[16]:
+# In[17]:
 
 
 # Initialize Classes Labels
@@ -454,7 +463,7 @@ partition_labels_training = partition_labels_training+0
 
 # Re-Load Grid and Redefine Relevant Input/Output dimensions in dictionary.
 
-# In[17]:
+# In[18]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -469,7 +478,7 @@ param_grid_Deep_Classifier['output_dim'] = [partition_labels_training.shape[1]]
 
 # #### Train Deep Classifier
 
-# In[18]:
+# In[19]:
 
 
 # Train simple deep classifier
@@ -482,7 +491,7 @@ predicted_classes_train, predicted_classes_test, N_params_deep_classifier = buil
                                                                                                         X_test = X_test)
 
 
-# In[19]:
+# In[20]:
 
 
 # Time-Elapsed Training Deep Classifier
@@ -491,7 +500,7 @@ Architope_deep_classifier_training = time.time() - Architope_deep_classifier_tra
 
 # Make Prediction(s)
 
-# In[20]:
+# In[21]:
 
 
 # Training Set
@@ -504,7 +513,7 @@ Architope_prediction_y_test = np.take_along_axis(predictions_test, predicted_cla
 
 # Compute Performance
 
-# In[21]:
+# In[22]:
 
 
 # Compute Peformance
@@ -527,7 +536,7 @@ print(performance_Architope)
 
 # ### Model Complexity/Efficiency Metrics
 
-# In[22]:
+# In[23]:
 
 
 # Compute Parameters for composite models #
@@ -569,14 +578,14 @@ print(Architope_Model_Complexity_full)
 # ### Architope with Logistic-Classifier Partitioning
 # #### Train Logistic Classifier (Benchmark)
 
-# In[23]:
+# In[24]:
 
 
 # Time-Elapsed Training linear classifier
 Architope_logistic_classifier_training_begin = time.time()
 
 
-# In[24]:
+# In[25]:
 
 
 parameters = {'penalty': ['none','l1', 'l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
@@ -590,14 +599,14 @@ partition_labels_training = np.argmin(training_quality,axis=-1)
 
 # #### Train Logistic Classifier
 
-# In[25]:
+# In[26]:
 
 
 # Update User on shape of learned partition
 print(partition_labels_training)
 
 
-# In[26]:
+# In[27]:
 
 
 # Update User #
@@ -614,7 +623,7 @@ classifier.fit(X_train, partition_labels_training)
 
 # #### Write Predicted Class(es)
 
-# In[27]:
+# In[28]:
 
 
 # Training Set
@@ -629,7 +638,7 @@ Architope_prediction_y_test_logistic_BM = np.take_along_axis(predictions_test, p
 N_params_best_logistic = (classifier.best_estimator_.coef_.shape[0])*(classifier.best_estimator_.coef_.shape[1]) + len(classifier.best_estimator_.intercept_)
 
 
-# In[28]:
+# In[29]:
 
 
 # Time-Elapsed Training linear classifier
@@ -638,7 +647,7 @@ Architope_logistic_classifier_training = time.time() - Architope_logistic_classi
 
 # #### Compute Performance
 
-# In[29]:
+# In[30]:
 
 
 # Compute Peformance
@@ -656,14 +665,14 @@ print(performance_architope_ffNN_logistic)
 # ---
 # ## Bagged Feed-Forward Networks (ffNNs)
 
-# In[30]:
+# In[31]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time_begin = time.time()
 
 
-# In[31]:
+# In[32]:
 
 
 # Train Bagging Weights in-sample
@@ -677,14 +686,14 @@ bagged_prediction_test = bagging_coefficients.predict(predictions_test)
 N_bagged_parameters = len(bagging_coefficients.coef_) + 1
 
 
-# In[32]:
+# In[33]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time = time.time() - Bagging_ffNN_bagging_time_begin
 
 
-# In[33]:
+# In[34]:
 
 
 # Compute Peformance
@@ -700,7 +709,7 @@ print("Written Bagged Performance")
 print(performance_bagged_ffNN)
 
 
-# In[34]:
+# In[35]:
 
 
 print("Random Partition: Generated!...Feature Generation Complete!")
@@ -709,7 +718,7 @@ print("Random Partition: Generated!...Feature Generation Complete!")
 # ## Vanilla ffNN
 # #### Reload Hyper-parameter Grid
 
-# In[35]:
+# In[36]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -720,14 +729,14 @@ exec(open('Helper_Functions.py').read())
 param_grid_Vanilla_Nets['input_dim'] = [X_train.shape[1]]
 
 
-# In[36]:
+# In[37]:
 
 
 # Time for Bagging
 Vanilla_ffNN_time_beginn = time.time()
 
 
-# In[37]:
+# In[38]:
 
 
 #X_train vanilla ffNNs
@@ -741,14 +750,14 @@ y_hat_train_Vanilla_ffNN, y_hat_test_Vanilla_ffNN, N_params_Vanilla_ffNN = build
                                                                                    X_test=X_test)
 
 
-# In[38]:
+# In[39]:
 
 
 # Time for Bagging
 Vanilla_ffNN_time = time.time() - Vanilla_ffNN_time_beginn
 
 
-# In[39]:
+# In[40]:
 
 
 # Update User #
@@ -758,7 +767,7 @@ print("Trained vanilla ffNNs")
 
 # #### Evaluate Performance
 
-# In[40]:
+# In[41]:
 
 
 # Compute Peformance
@@ -774,7 +783,7 @@ print(performance_Vanilla_ffNN)
 
 # #### Compute Required Training Time(s)
 
-# In[41]:
+# In[42]:
 
 
 # In-Line #
@@ -802,7 +811,7 @@ Bagged_ffNN_Time_parallel = partitioning_time + Architope_partitioning_max_time_
 
 # #### Write Required Training Times
 
-# In[42]:
+# In[43]:
 
 
 # Update User #
@@ -831,7 +840,7 @@ print(Model_Training_times)
 
 # ## Run: Gradient Boosted Random Forest Regression
 
-# In[43]:
+# In[44]:
 
 
 # Update User #
@@ -848,7 +857,7 @@ print('Training of Gradient-Boosted Random Forest: Complete!')
 # ## Training Result(s)
 # #### (Update) Write Required Training Times
 
-# In[44]:
+# In[45]:
 
 
 # Update User #
@@ -883,7 +892,7 @@ print(Model_Training_times)
 # ### Prediction Metric(s)
 # #### Write Predictive Performance Dataframe(s)
 
-# In[45]:
+# In[46]:
 
 
 # Write Training Performance
@@ -914,7 +923,7 @@ print(predictive_performance_training)
 
 # ### Model Complexity/Efficiency Metrics
 
-# In[46]:
+# In[47]:
 
 
 # Compute Parameters for composite models #
@@ -963,7 +972,7 @@ print(Model_Complexity_Metrics)
 
 # # Summary
 
-# In[47]:
+# In[48]:
 
 
 print(' ')
