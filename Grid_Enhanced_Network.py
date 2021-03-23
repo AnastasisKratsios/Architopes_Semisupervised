@@ -1,4 +1,4 @@
-trial_run = False
+trial_run = True
 # This one is with larger height
 
 # This file contains the hyper-parameter grids used to train the imprinted-tree nets.
@@ -23,7 +23,7 @@ if trial_run == True:
     n_iter = 1
     n_iter_trees = 1#20
     # Number of CV Folds
-    CV_folds = 4
+    CV_folds = 2
 
     
     # Model Parameters
