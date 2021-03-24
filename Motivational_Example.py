@@ -1,7 +1,25 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# # Proof of Concept Demo
+
+# In[ ]:
+
+
+## InDEV Hyperparameters
+# n = 5
+# def f_1(x):
+#     return x
+# def f_2(x):
+#     return x**2
+# x_0 = 0
+# x_end = 10
+# N = 1000
+
+
+# ## Initializations
+
+# In[8]:
 
 
 import numpy as np
@@ -13,35 +31,38 @@ import tensorflow as tf
 import sklearn.model_selection as sk
 
 
-# In[3]:
+# In[23]:
 
 
-# n = 5
-# def f_1(x):
-#     return x
-# def f_2(x):
-#     return x**2
-# x_0 = 0
-# x_end = 30
+# Initializations
+## Counters & Related
+dt = x_end/N
+x_current = x_0
+i = 0
+## Containers
 x_1 = []
 y_1 = []
 x_2 = []
 y_2 = []
-for i in range(x_0 + 1, x_end):
+## Build Pattern
+while x_current < x_end:
     for j in range(0,n):
-        x = uniform(i, i+1)
+        x = uniform(x_current, x_current+dt)
         if i%2 == 0:
             x_1.append(x)
             y_1.append(f_1(x))
         else:
             x_2.append(x)
             y_2.append(f_2(x))
+    # Update
+    x_current = x_current + dt
+    i = i+1
 
 x = [*x_1, *x_2]
 y = [*y_1, *y_2]
 
 
-# In[4]:
+# In[24]:
 
 
 figure(num=None, figsize=(8, 6), dpi=80, facecolor='w', edgecolor='k')
@@ -51,13 +72,22 @@ plt.scatter(x_2,y_2)
 
 # # Split Training and Testing Datasets
 
-# In[5]:
+# In[11]:
 
 
 X_train, X_test, y_train, y_test = sk.train_test_split(x,
                                                     y,
                                                     test_size=0.33,
                                                     random_state=42)
+
+
+# In[14]:
+
+
+X_train = pd.DataFrame({"X": X_train})
+X_test = pd.DataFrame({"X": X_test})
+data_y = pd.DataFrame({"X": y_train})
+data_y_test = pd.DataFrame({"X": y_test})
 
 
 # ### Split Sub-Patterns
