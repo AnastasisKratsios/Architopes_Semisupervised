@@ -3,23 +3,29 @@
 
 # # Proof of Concept Demo
 
-# In[ ]:
+# In[12]:
 
 
-## InDEV Hyperparameters
-# n = 5
+# #------------------------------------#
+# # Only For Motivational Example Only #
+# #------------------------------------#
+# ## Hyperparameters
+# percentage_in_row = .5
+# N = 50
+
 # def f_1(x):
 #     return x
 # def f_2(x):
 #     return x**2
 # x_0 = 0
-# x_end = 10
-# N = 1000
+# x_end = 1
+
+# test_size_ratio = 1
 
 
 # ## Initializations
 
-# In[8]:
+# In[13]:
 
 
 import numpy as np
@@ -31,11 +37,12 @@ import tensorflow as tf
 import sklearn.model_selection as sk
 
 
-# In[23]:
+# In[16]:
 
 
 # Initializations
 ## Counters & Related
+n = int(round(percentage_in_row*N))
 dt = x_end/N
 x_current = x_0
 i = 0
@@ -46,14 +53,15 @@ x_2 = []
 y_2 = []
 ## Build Pattern
 while x_current < x_end:
-    for j in range(0,n):
-        x = uniform(x_current, x_current+dt)
-        if i%2 == 0:
-            x_1.append(x)
-            y_1.append(f_1(x))
-        else:
-            x_2.append(x)
-            y_2.append(f_2(x))
+    # Sample Current Point
+    x = uniform(x_current, x_current+dt)
+    # Check which pattern it belongs to
+    if i % n <= round(n*percentage_in_row):
+        x_1.append(x)
+        y_1.append(f_1(x))
+    else:
+        x_2.append(x)
+        y_2.append(f_2(x))
     # Update
     x_current = x_current + dt
     i = i+1
@@ -62,7 +70,7 @@ x = [*x_1, *x_2]
 y = [*y_1, *y_2]
 
 
-# In[24]:
+# In[17]:
 
 
 figure(num=None, figsize=(8, 6), dpi=80, facecolor='w', edgecolor='k')
@@ -72,43 +80,53 @@ plt.scatter(x_2,y_2)
 
 # # Split Training and Testing Datasets
 
-# In[11]:
+# In[36]:
 
 
-X_train, X_test, y_train, y_test = sk.train_test_split(x,
-                                                    y,
-                                                    test_size=0.33,
-                                                    random_state=42)
+if test_size_ratio < 1:
+    # Generate
+    X_train, X_test, y_train, y_test = sk.train_test_split(x,
+                                                           y,
+                                                           test_size=test_size_ratio,
+                                                           random_state=42)
+    # Format
+    X_train = pd.DataFrame({"X": X_train})
+    X_test = pd.DataFrame({"X": X_test})
+    data_y = pd.DataFrame({"X": y_train})
+    data_y_test = pd.DataFrame({"X": y_test})
+else:
+    # Format
+    X_train = pd.DataFrame({"X": x})
+    X_test = pd.DataFrame({"X": x})
+    data_y = pd.DataFrame({"X": y})
+    data_y_test = pd.DataFrame({"X": y})
+    y_train = data_y
+    y_test = data_y_test
 
-
-# In[14]:
-
-
-X_train = pd.DataFrame({"X": X_train})
-X_test = pd.DataFrame({"X": X_test})
-data_y = pd.DataFrame({"X": y_train})
-data_y_test = pd.DataFrame({"X": y_test})
+# Coersion
+y_train = np.array(y_train).reshape(-1)
+y_test = np.array(y_test).reshape(-1)
 
 
 # ### Split Sub-Patterns
 
-# In[7]:
+# In[30]:
 
 
 # Split Datasets
 X1_train, X1_test, y1_train, y1_test = sk.train_test_split(x_1,
                                                     y_1,
-                                                    test_size=0.33,
+                                                    test_size=test_size_ratio,
                                                     random_state=42)
 X2_train, X2_test, y2_train, y2_test = sk.train_test_split(x_2,
                                                     y_2,
-                                                    test_size=0.33,
+                                                    test_size=test_size_ratio,
                                                     random_state=42)
 
 
 # # Oracle Model:
 
-# In[6]:
+# In[31]:
 
 
 # # example of a model defined with the sequential api
