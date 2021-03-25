@@ -135,7 +135,7 @@ Our last example allows us to visually scrutinize the difference between the fee
 ---
 #### Model Complexity Results:
 
-| In-Line (L-Time) | Parallel (P-Time) |    Number of Parameters Required |      AIC-like |    Eff(†) |
+| Model | Parallel (P-Time) |    Number of Parameters Required |      AIC-like |    Eff(†) |
 | - | -| -| -| -|
 | Vanilla ffNN       |          1901.83 |                 - |   753001 |  1506008.374 |  0.559 |
 | Grad.Bstd Rand.F   |            1.042 |                 - |       70 |      144.492 |  0.449 |
