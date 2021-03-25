@@ -2,6 +2,9 @@
 **Submitted to:** *Thirty-eighth International Conference on Machine Learning*
 
 ---
+![alt text](https://raw.githubusercontent.com/AnastasisKratsios/Architopes_Semisupervised/main/DEMO.png)
+
+---
 
 ## Requirements
 
