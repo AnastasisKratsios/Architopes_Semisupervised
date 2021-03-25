@@ -71,6 +71,7 @@ The trajectory of a typical cryptocurrency's price process is best modeled by a 
 | - | -| -| -| -|
 | Architope          |          1604.63 |           1101.95 |    42232 |    84455.164 |   883.157|
 
+*(†) Eff is a non-standard metric, not included in the final paper.  It is defined by N_parameters x log(Test-set-MAE)*
 
 ---
 
@@ -112,8 +113,43 @@ The [California Housing Price Dataset](https://github.com/ageron/handson-ml/tree
 | Architope-Expert | 8453.926916 |  4117.519696 |          83731 |  167464.294 |  3.6 |
 | Architope-Expert + Repartitioning |  15811.70576 |  6596.203372 |          13604 |  27210.296 |  3.019 |
 
-(†) Eff is a non-standard metric, not included in the final paper.  It is defined by N_parameters x log(Test-set-MAE)
+*(†) Eff is a non-standard metric, not included in the final paper.  It is defined by N_parameters x log(Test-set-MAE)*
 
+### 3) Synthetic Univariate Example
+Our last example allows us to visually scrutinize the difference between the feed-forward architecture and the architope.  Specifically, we qualitatively and quantitatively examine our architecture's ability (and its training algorithm) to learn patterns with jump discontinuities.  We turn to a univariate illustration to streamline our visualization of this phenomenon.  
+
+
+#### Test-set performance:
+
+|Model |  MAE |       MSE |       MAPE |
+|-|-|-|-|
+| ffNN     |  0.041288 |  0.008275 |  63.413685  |
+| GBRF     |  0.105796 |  0.014667 |  37.346306 |
+| ffNN-bag |  0.060555 |  0.006006 |  89.023286 |
+| ffNN-lgt |  0.054622 |  0.009862 |  40.509927 |
+| - | -| -| -| -|
+| Architope     |  0.015508 |  0.001026 |  17.543040 |
+
+
+---
+#### Model Complexity Results:
+
+| In-Line (L-Time) | Parallel (P-Time) |    Number of Parameters Required |      AIC-like |    Eff(†) |
+| - | -| -| -| -|
+| Vanilla ffNN       |          1901.83 |                 - |   753001 |  1506008.374 |  0.559 |
+| Grad.Bstd Rand.F   |            1.042 |                 - |       70 |      144.492 |  0.449 |
+| Bagged ffNN        |          625.932 |           320.119 |   530250 |  1060505.608 |  0.798 |
+| Architope-logistic |          629.353 |            323.54 |   530253 |  1060511.815 |  0.720  |
+| - | -| -| -| -|
+| Architope          |          2295.46 |           1989.65 |  1284749 |  2569506.333 |  0.218|
+
+*(†) Eff is a non-standard metric, not included in the final paper.  It is defined by N_parameters x log(Test-set-MAE)*
+
+
+
+---
+
+![alt text](https://raw.githubusercontent.com/AnastasisKratsios/Architopes_Semisupervised/main/DEMO.png)
 
 ---
 ## Grid of Hyperparameters
