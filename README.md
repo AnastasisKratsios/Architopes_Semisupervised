@@ -74,7 +74,7 @@ The trajectory of a typical cryptocurrency's price process is best modeled by a 
 
 ---
 
-![alt text](https://github.com/AnastasisKratsios/Architopes_Semisupervised/blob/main/0_Experimental_Results/crypto/outputs/plotsANDfigures/Crypto_Data_returns.pdf)
+![alt text](https://raw.githubusercontent.com/AnastasisKratsios/Architopes_Semisupervised/main/0_Experimental_Results/crypto/outputs/plotsANDfigures/CryptoMarketReturns.png)
 
 
 
