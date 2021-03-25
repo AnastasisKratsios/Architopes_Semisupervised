@@ -1,4 +1,4 @@
-# Implementations for: Overcoming The Limitations of Neural Networks in Composite-Pattern Learning with Architopes
+# Implementations for: [Learning Sub-Patterns in Piece-Wise Continuous Functions](https://arxiv.org/pdf/2010.15571.pdf)
 **Submitted to:** *Thirty-eighth International Conference on Machine Learning*
 
 ---
