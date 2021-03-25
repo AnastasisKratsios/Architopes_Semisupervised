@@ -2,7 +2,6 @@
 **Submitted to:** *Thirty-eighth International Conference on Machine Learning*
 
 ---
-![alt text](https://raw.githubusercontent.com/AnastasisKratsios/Architopes_Semisupervised/main/DEMO.png)
 
 #### DEMO: 
 * In-sample approximation of discontinuous function f with discontinuities arising from two sub-patterns: f_1 and f_2 defined on a partition of the input space.  NB the (feed-forward neural network) ffNN cannot capture the sub-pattern behaviour while the architope (tope) can.
