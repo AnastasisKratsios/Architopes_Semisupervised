@@ -41,7 +41,7 @@ The first trains the semi-supervised architope model and the following benchmark
 
 ---
 
-## Results
+## Experimental Results
 
 ### 1) Tracking Portfolio of Day-Ahead Bitcoin Price
 The trajectory of a typical cryptocurrency's price process is best modeled by a function with many jump discontinuities.  This makes predicting the day-ahead bitcoin's price based on the current day's returns of 15 *(other)* major cryptocurrencies's returns a natural testing ground for the architope.  Our result
