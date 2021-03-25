@@ -43,11 +43,46 @@ The first trains the semi-supervised architope model and the following benchmark
 
 ## Results
 
-Our models and their benchmarks achieves the following performance on:
+### 1) Tracking Portfolio of Day-Ahead Bitcoin Price
+The trajectory of a typical cryptocurrency's price process is best modeled by a function with many jump discontinuities.  This makes predicting the day-ahead bitcoin's price based on the current day's returns of 15 *(other)* major cryptocurrencies's returns a natural testing ground for the architope.  Our result
 
-### [California Housing Price Dataset](https://github.com/ageron/handson-ml/tree/master/datasets/housing)
 
-The house prices were multiplied by $10^{-5}$ to avoid exploding gradient issues.
+#### Test-set performance:
+
+|Model |  MAE |       MSE |       MAPE |
+|-|-|-|-|
+| ffNN     |  104.624726 |  16953.296244 |  126.453045 |
+| GBRF     |  83.961955 |  11904.461155 |  177.761026 |
+| ffNN-bag |  91.328308 |  13419.106120 |  185.029975 |
+| ffNN-lgt |  85.132590 |  10892.687762 | 154.189022 |
+| - | -| -| -| -|
+| Architope     |  82.918249 |   9020.612828 |  268.814960 |
+
+
+---
+#### Model Complexity Results:
+
+| In-Line (L-Time) | Parallel (P-Time) |    Number of Parameters Required |      AIC-like |    Eff(†) |
+| - | -| -| -| -|
+| Vanilla ffNN       |          675.123 |                 - |    52601 |   105192.699 |  1137.322 |
+| Grad.Bstd Rand.F   |            34.772 |                 - |  1002480 |  2004951.139 |  1160.185 |
+| Bagged ffNN        |          1078.77 |           576.093 |    25833 |    51656.971 |   927.842 |
+| Architope-logistic |          1081.18 |           578.502 |    25891 |    51773.112 |   865.088 |
+| - | -| -| -| -|
+| Architope          |          1604.63 |           1101.95 |    42232 |    84455.164 |   883.157|
+
+
+---
+
+![alt text](https://github.com/AnastasisKratsios/Architopes_Semisupervised/blob/main/0_Experimental_Results/crypto/outputs/plotsANDfigures/Crypto_Data_returns.pdf)
+
+
+
+### 2) California Housing Market
+The [California Housing Price Dataset](https://github.com/ageron/handson-ml/tree/master/datasets/housing) is a dataset where an expert provided partition of the input space, based on geo-special features, is exogenously known.  This makes this dataset a good candidate for comparing our training Algorithm's ability to infer a good partition to a known "good partition".  Our models and their benchmarks achieves the following performance on:
+
+
+*NB:* The house prices were multiplied by $10^{-5}$ to avoid exploding gradient issues.
 
 #### Test-set performance:
 
