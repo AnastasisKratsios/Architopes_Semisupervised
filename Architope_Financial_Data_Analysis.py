@@ -10,7 +10,7 @@
 # In[1]:
 
 
-# trial_run = True
+trial_run = True
 
 
 # ### Meta-parameters
@@ -19,15 +19,33 @@
 
 
 # Test-size Ratio
-test_size_ratio = 0.90
+test_size_ratio = 1
 min_height = 50
+
+
+# In[3]:
+
+
+#------------------------------------#
+# Only For Motivational Example Only #
+#------------------------------------#
+## Hyperparameters
+percentage_in_row = .25
+N = 5000
+
+def f_1(x):
+    return x
+def f_2(x):
+    return x**2
+x_0 = 0
+x_end = 1
 
 
 # ### Hyperparameters
 # 
 # Only turn of if running code directly here, typically this script should be run be called by other notebooks.  
 
-# In[3]:
+# In[4]:
 
 
 # load dataset
@@ -39,7 +57,7 @@ data_path_folder = "./inputs/data/"
 
 # ### Import
 
-# In[4]:
+# In[5]:
 
 
 # Load Packages/Modules
@@ -49,14 +67,19 @@ exec(open('Grid_Enhanced_Network.py').read())
 # Load Helper Function(s)
 exec(open('Helper_Functions.py').read())
 # Pre-process Data
-exec(open('Financial_Data_Preprocessor.py').read())
+if Option_Function != "Motivational_Example": 
+    exec(open('Financial_Data_Preprocessor.py').read())
+else:
+    print(1)
+    exec(open('Motivational_Example.py').read())
+    print("Training Data size: ",X_train.shape[0])
 # Import time separately
 import time
 
 
 # ### Set Seed
 
-# In[5]:
+# In[6]:
 
 
 random.seed(2021)
@@ -91,7 +114,7 @@ tf.random.set_seed(2021)
 
 # ## Define Random Partition Builder
 
-# In[6]:
+# In[7]:
 
 
 from scipy.spatial import distance_matrix
@@ -99,7 +122,7 @@ from scipy.spatial import distance_matrix
 
 # Here we use $\Delta_{in} = Q_{q}\left(\Delta(\mathbb{X})\right)$ where $\Delta(\mathbb{X})$ is the vector of (Euclidean) distances between the given data-points, $q \in (0,1)$ is a hyper-parameter, and $Q$ is the empirical quantile function.
 
-# In[7]:
+# In[8]:
 
 
 def Random_Lipschitz_Partioner(Min_data_size_percentage,q_in, X_train_in,y_train_in, CV_folds_failsafe, min_size):
@@ -251,29 +274,40 @@ def Random_Lipschitz_Partioner(Min_data_size_percentage,q_in, X_train_in,y_train
 
 # # Apply Random Partitioner to the given Dataset
 
-# In[8]:
+# In[9]:
 
 
 import time
 partitioning_time_begin = time.time()
 
 
-# In[9]:
+# In[10]:
 
 
 if Option_Function == 'SnP':
     q_in_auto = .8
     Min_data_size_percentage_auto = .1
+    min_size_part = 100
 else:
     if Option_Function == 'crypto':
         q_in_auto = .99
         Min_data_size_percentage_auto = .3
+        min_size_part = 100
+    if Option_Function == 'Motivational_Example':
+        q_in_auto = .5
+        Min_data_size_percentage_auto = .5
+        min_size_part = 10
+        # Partition Based on Y
+        holder_temp = data_y
+        data_y = X_train
+        X_train = holder_temp
     else:
         q_in_auto = .5
         Min_data_size_percentage_auto = .3
+        min_size_part = 100
 
 
-# In[10]:
+# In[11]:
 
 
 # Initialize Number of Parts currently generated
@@ -287,7 +321,7 @@ while N_parts_generated < 2:
                                                                       X_train_in=X_train, 
                                                                       y_train_in=data_y, 
                                                                       CV_folds_failsafe=CV_folds,
-                                                                      min_size = 100)
+                                                                      min_size = min_size_part)
     
     # Update Number of Parts
     N_parts_generated = len(X_parts_list)
@@ -297,15 +331,30 @@ while N_parts_generated < 2:
     
     # Update User
     print('The_parts_listhe number of parts are: ' + str(len(X_parts_list))+'.')
+    
+# Trash removal (removes empty parts)
+X_parts_list = list(filter(([]).__ne__, X_parts_list))
+y_parts_list = list(filter(([]).__ne__, y_parts_list))
+    
+    
+# ICML Rebuttle Deadline = Coersion!
+if Option_Function == 'Motivational_Example':
+    # Flipback After Partitioning Based on Y (since code was made for partitioning in X!)
+    holder_temp = data_y
+    data_y = X_train
+    X_train = holder_temp
+    holder_temp = y_parts_list
+    y_parts_list = X_parts_list
+    X_parts_list = holder_temp
 
 
-# In[11]:
+# In[12]:
 
 
 partitioning_time = time.time() - partitioning_time_begin
 
 
-# In[12]:
+# In[13]:
 
 
 print('The_parts_listhe number of parts are: ' + str(len(X_parts_list))+'.')
@@ -316,7 +365,7 @@ print('The_parts_listhe number of parts are: ' + str(len(X_parts_list))+'.')
 # - Generate predictions for (full) training and testings sets respectively, to be used in training the classifer and for prediction, respectively.  
 # - Generate predictions on all of testing-set (will be selected between later using classifier)
 
-# In[13]:
+# In[14]:
 
 
 # Time-Elapse (Start) for Training on Each Part
@@ -327,10 +376,18 @@ Architope_partitioning_max_time_running = -math.inf # Initialize slowest-time at
 N_params_Architope = 0
 
 
-# In[14]:
+# In[ ]:
 
 
-for current_part in range(len(X_parts_list)):
+# Silly Coercsion for ICML rebuttle deadline timeline
+if Option_Function == 'Motivational_Example':
+    Iteration_Length = len(X_parts_list) -1
+else:
+    Iteration_Length = len(X_parts_list)
+
+    
+# Train each part!
+for current_part in range(Iteration_Length):
     #==============#
     # Timer(begin) #
     #==============#
@@ -425,7 +482,7 @@ print(' ')
 print(' ')
 
 
-# In[15]:
+# In[ ]:
 
 
 # Time-Elapsed Training on Each Part
@@ -439,14 +496,14 @@ Architope_partition_training = time.time() - Architope_partition_training_begin
 # #### Deep Classifier
 # Prepare Labels/Classes
 
-# In[16]:
+# In[ ]:
 
 
 # Time-Elapsed Training Deep Classifier
 Architope_deep_classifier_training_begin = time.time()
 
 
-# In[17]:
+# In[ ]:
 
 
 # Initialize Classes Labels
@@ -463,7 +520,7 @@ partition_labels_training = partition_labels_training+0
 
 # Re-Load Grid and Redefine Relevant Input/Output dimensions in dictionary.
 
-# In[18]:
+# In[ ]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -478,7 +535,7 @@ param_grid_Deep_Classifier['output_dim'] = [partition_labels_training.shape[1]]
 
 # #### Train Deep Classifier
 
-# In[19]:
+# In[ ]:
 
 
 # Train simple deep classifier
@@ -491,7 +548,7 @@ predicted_classes_train, predicted_classes_test, N_params_deep_classifier = buil
                                                                                                         X_test = X_test)
 
 
-# In[20]:
+# In[ ]:
 
 
 # Time-Elapsed Training Deep Classifier
@@ -500,7 +557,7 @@ Architope_deep_classifier_training = time.time() - Architope_deep_classifier_tra
 
 # Make Prediction(s)
 
-# In[21]:
+# In[ ]:
 
 
 # Training Set
@@ -513,7 +570,7 @@ Architope_prediction_y_test = np.take_along_axis(predictions_test, predicted_cla
 
 # Compute Performance
 
-# In[22]:
+# In[ ]:
 
 
 # Compute Peformance
@@ -536,7 +593,7 @@ print(performance_Architope)
 
 # ### Model Complexity/Efficiency Metrics
 
-# In[23]:
+# In[ ]:
 
 
 # Compute Parameters for composite models #
@@ -578,14 +635,14 @@ print(Architope_Model_Complexity_full)
 # ### Architope with Logistic-Classifier Partitioning
 # #### Train Logistic Classifier (Benchmark)
 
-# In[24]:
+# In[ ]:
 
 
 # Time-Elapsed Training linear classifier
 Architope_logistic_classifier_training_begin = time.time()
 
 
-# In[25]:
+# In[ ]:
 
 
 parameters = {'penalty': ['none','l1', 'l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
@@ -599,14 +656,14 @@ partition_labels_training = np.argmin(training_quality,axis=-1)
 
 # #### Train Logistic Classifier
 
-# In[26]:
+# In[ ]:
 
 
 # Update User on shape of learned partition
 print(partition_labels_training)
 
 
-# In[27]:
+# In[ ]:
 
 
 # Update User #
@@ -623,7 +680,7 @@ classifier.fit(X_train, partition_labels_training)
 
 # #### Write Predicted Class(es)
 
-# In[28]:
+# In[ ]:
 
 
 # Training Set
@@ -638,7 +695,7 @@ Architope_prediction_y_test_logistic_BM = np.take_along_axis(predictions_test, p
 N_params_best_logistic = (classifier.best_estimator_.coef_.shape[0])*(classifier.best_estimator_.coef_.shape[1]) + len(classifier.best_estimator_.intercept_)
 
 
-# In[29]:
+# In[ ]:
 
 
 # Time-Elapsed Training linear classifier
@@ -647,7 +704,7 @@ Architope_logistic_classifier_training = time.time() - Architope_logistic_classi
 
 # #### Compute Performance
 
-# In[30]:
+# In[ ]:
 
 
 # Compute Peformance
@@ -665,14 +722,14 @@ print(performance_architope_ffNN_logistic)
 # ---
 # ## Bagged Feed-Forward Networks (ffNNs)
 
-# In[31]:
+# In[ ]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time_begin = time.time()
 
 
-# In[32]:
+# In[ ]:
 
 
 # Train Bagging Weights in-sample
@@ -686,14 +743,14 @@ bagged_prediction_test = bagging_coefficients.predict(predictions_test)
 N_bagged_parameters = len(bagging_coefficients.coef_) + 1
 
 
-# In[33]:
+# In[ ]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time = time.time() - Bagging_ffNN_bagging_time_begin
 
 
-# In[34]:
+# In[ ]:
 
 
 # Compute Peformance
@@ -709,7 +766,7 @@ print("Written Bagged Performance")
 print(performance_bagged_ffNN)
 
 
-# In[35]:
+# In[ ]:
 
 
 print("Random Partition: Generated!...Feature Generation Complete!")
@@ -718,7 +775,7 @@ print("Random Partition: Generated!...Feature Generation Complete!")
 # ## Vanilla ffNN
 # #### Reload Hyper-parameter Grid
 
-# In[36]:
+# In[ ]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -729,14 +786,14 @@ exec(open('Helper_Functions.py').read())
 param_grid_Vanilla_Nets['input_dim'] = [X_train.shape[1]]
 
 
-# In[37]:
+# In[ ]:
 
 
 # Time for Bagging
 Vanilla_ffNN_time_beginn = time.time()
 
 
-# In[38]:
+# In[ ]:
 
 
 #X_train vanilla ffNNs
@@ -750,14 +807,14 @@ y_hat_train_Vanilla_ffNN, y_hat_test_Vanilla_ffNN, N_params_Vanilla_ffNN = build
                                                                                    X_test=X_test)
 
 
-# In[39]:
+# In[ ]:
 
 
 # Time for Bagging
 Vanilla_ffNN_time = time.time() - Vanilla_ffNN_time_beginn
 
 
-# In[40]:
+# In[ ]:
 
 
 # Update User #
@@ -767,7 +824,7 @@ print("Trained vanilla ffNNs")
 
 # #### Evaluate Performance
 
-# In[41]:
+# In[ ]:
 
 
 # Compute Peformance
@@ -783,7 +840,7 @@ print(performance_Vanilla_ffNN)
 
 # #### Compute Required Training Time(s)
 
-# In[42]:
+# In[ ]:
 
 
 # In-Line #
@@ -811,7 +868,7 @@ Bagged_ffNN_Time_parallel = partitioning_time + Architope_partitioning_max_time_
 
 # #### Write Required Training Times
 
-# In[43]:
+# In[ ]:
 
 
 # Update User #
@@ -840,7 +897,7 @@ print(Model_Training_times)
 
 # ## Run: Gradient Boosted Random Forest Regression
 
-# In[44]:
+# In[ ]:
 
 
 # Update User #
@@ -857,7 +914,7 @@ print('Training of Gradient-Boosted Random Forest: Complete!')
 # ## Training Result(s)
 # #### (Update) Write Required Training Times
 
-# In[45]:
+# In[ ]:
 
 
 # Update User #
@@ -892,7 +949,7 @@ print(Model_Training_times)
 # ### Prediction Metric(s)
 # #### Write Predictive Performance Dataframe(s)
 
-# In[46]:
+# In[ ]:
 
 
 # Write Training Performance
@@ -923,7 +980,7 @@ print(predictive_performance_training)
 
 # ### Model Complexity/Efficiency Metrics
 
-# In[47]:
+# In[ ]:
 
 
 # Compute Parameters for composite models #
@@ -972,7 +1029,7 @@ print(Model_Complexity_Metrics)
 
 # # Summary
 
-# In[48]:
+# In[ ]:
 
 
 print(' ')
@@ -1038,6 +1095,40 @@ print(Model_Complexity_Metrics)
 print(' ')
 print(' ')
 print('😃😃 Have a great day!! 😃😃 ')
+
+
+# In[ ]:
+
+
+# Initialize Plot #
+#-----------------#
+plt.figure(num=None, figsize=(12, 12), dpi=80, facecolor='w', edgecolor='k')
+
+# Generate Plots #
+#----------------#
+# Plot Signal
+# plt.scatter(x,y,color='gray',label='$f(x)$',linestyle='--')
+plt.scatter(x_1,y_1,color='orange',label=r'$f_1(x)$',linestyle='--')
+plt.scatter(x_2,y_2,color='blue',label=r'$f_2(x)$',linestyle='--')
+
+#--------------------#
+# Benchmark Model(s) #
+#--------------------#
+# Plot ffNN
+plt.scatter(x,y_hat_train_Vanilla_ffNN, color = 'gray',linestyle="--",  label='ffNN')
+plt.scatter(x,Architope_prediction_y_train, color = 'black',linestyle="--",  label='tope')
+
+
+
+# Format Plot #
+#-------------#
+plt.legend(loc="upper left")
+plt.title("Model Predictions")
+
+# Export #
+#--------#
+# SAVE Figure to .eps
+plt.savefig('./outputs/plotsANDfigures/DEMO.pdf', format='pdf')
 
 
 # ---
