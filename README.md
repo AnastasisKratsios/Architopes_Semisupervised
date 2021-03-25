@@ -1,4 +1,4 @@
-# Implementations for: [Learning Sub-Patterns in Piece-Wise Continuous Functions](https://arxiv.org/pdf/2010.15571.pdf)
+# [Learning Sub-Patterns in Piece-Wise Continuous Functions](https://arxiv.org/pdf/2010.15571.pdf)
 **Submitted to:** *Thirty-eighth International Conference on Machine Learning*
 
 ---
