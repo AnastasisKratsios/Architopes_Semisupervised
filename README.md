@@ -51,10 +51,10 @@ The trajectory of a typical cryptocurrency's price process is best modeled by a 
 
 |Model |  MAE |       MSE |       MAPE |
 |-|-|-|-|
-| ffNN     |  104.624726 |  16953.296244 |  126.453045 |
-| GBRF     |  83.961955 |  11904.461155 |  177.761026 |
-| ffNN-bag |  91.328308 |  13419.106120 |  185.029975 |
-| ffNN-lgt |  85.132590 |  10892.687762 | 154.189022 |
+| Vanilla ffNN      |  104.624726 |  16953.296244 |  126.453045 |
+| Grad.Bstd Rand.F     |  83.961955 |  11904.461155 |  177.761026 |
+| Bagged ffNN   |  91.328308 |  13419.106120 |  185.029975 |
+| Architope-logistic |  85.132590 |  10892.687762 | 154.189022 |
 | - | -| -| -| -|
 | Architope     |  82.918249 |   9020.612828 |  268.814960 |
 
@@ -89,10 +89,10 @@ The [California Housing Price Dataset](https://github.com/ageron/handson-ml/tree
 
 |Model |  MAE |       MSE |       MAPE |
 |-|-|-|-|
-| ffNN     |  0.321383 |  0.251979 |  19.810062 |
-| GBRF     |  0.346361 |  0.259093 |  17.985115 |
-| ffNN-bag |  0.495927 |  0.461367 |  29.052931 |
-| ffNN-lgt |  0.318711 |  0.257818 |  19.901575 |
+| Vanilla ffNN      |  0.321383 |  0.251979 |  19.810062 |
+| Grad.Bstd Rand.F     |  0.346361 |  0.259093 |  17.985115 |
+| Bagged ffNN |  0.495927 |  0.461367 |  29.052931 |
+| Architope-logistic |  0.318711 |  0.257818 |  19.901575 |
 | - | -| -| -| -|
 | Architope     |  0.312752 |  0.249929 |  17.689563 |
 | Architope Expert | 0.317560 | 0.256397 | 17.917502 |
@@ -125,10 +125,10 @@ Our last example allows us to visually scrutinize the difference between the fee
 
 |Model |  MAE |       MSE |       MAPE |
 |-|-|-|-|
-| ffNN     |  0.041288 |  0.008275 |  63.413685  |
-| GBRF     |  0.105796 |  0.014667 |  37.346306 |
-| ffNN-bag |  0.060555 |  0.006006 |  89.023286 |
-| ffNN-lgt |  0.054622 |  0.009862 |  40.509927 |
+| Vanilla ffNN     |  0.041288 |  0.008275 |  63.413685  |
+| Grad.Bstd Rand.F     |  0.105796 |  0.014667 |  37.346306 |
+| Bagged ffNN  |  0.060555 |  0.006006 |  89.023286 |
+| Architope-logistic |  0.054622 |  0.009862 |  40.509927 |
 | - | -| -| -| -|
 | Architope     |  0.015508 |  0.001026 |  17.543040 |
 
