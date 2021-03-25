@@ -117,7 +117,7 @@ The [California Housing Price Dataset](https://github.com/ageron/handson-ml/tree
 
 ---
 
-### 3) Synthetic Univariate Example
+### 3) Synthesized Example
 Our last example allows us to visually scrutinize the difference between the feed-forward architecture and the architope.  Specifically, we qualitatively and quantitatively examine our architecture's ability (and its training algorithm) to learn patterns with jump discontinuities.  We turn to a univariate illustration to streamline our visualization of this phenomenon.  
 
 
