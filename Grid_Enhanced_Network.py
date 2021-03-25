@@ -34,18 +34,18 @@ if trial_run == True:
     # Model Parameters
     #------------------#
     param_grid_Vanilla_Nets = {'batch_size': [16],
-                    'epochs': [1000],
+                    'epochs': [2],
                       'learning_rate': [0.0001],
-                      'height': [200],
-                       'depth': [4],
+                      'height': [2],
+                       'depth': [1],
                       'input_dim':[15],
                        'output_dim':[1]}
 
     param_grid_Deep_Classifier = {'batch_size': [16],
-                        'epochs': [1000],
+                        'epochs': [2],
                         'learning_rate': [0.0001],
-                        'height': [200],
-                        'depth': [4],
+                        'height': [2],
+                        'depth': [1],
                         'input_dim':[15],
                         'output_dim':[1]}
 

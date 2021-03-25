@@ -39,6 +39,7 @@ def f_2(x):
     return x**2
 x_0 = 0
 x_end = 1
+import seaborn as sns
 
 
 # ### Hyperparameters
@@ -376,7 +377,7 @@ Architope_partitioning_max_time_running = -math.inf # Initialize slowest-time at
 N_params_Architope = 0
 
 
-# In[ ]:
+# In[15]:
 
 
 # Silly Coercsion for ICML rebuttle deadline timeline
@@ -482,7 +483,7 @@ print(' ')
 print(' ')
 
 
-# In[ ]:
+# In[16]:
 
 
 # Time-Elapsed Training on Each Part
@@ -496,14 +497,14 @@ Architope_partition_training = time.time() - Architope_partition_training_begin
 # #### Deep Classifier
 # Prepare Labels/Classes
 
-# In[ ]:
+# In[17]:
 
 
 # Time-Elapsed Training Deep Classifier
 Architope_deep_classifier_training_begin = time.time()
 
 
-# In[ ]:
+# In[18]:
 
 
 # Initialize Classes Labels
@@ -520,7 +521,7 @@ partition_labels_training = partition_labels_training+0
 
 # Re-Load Grid and Redefine Relevant Input/Output dimensions in dictionary.
 
-# In[ ]:
+# In[19]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -535,7 +536,7 @@ param_grid_Deep_Classifier['output_dim'] = [partition_labels_training.shape[1]]
 
 # #### Train Deep Classifier
 
-# In[ ]:
+# In[20]:
 
 
 # Train simple deep classifier
@@ -548,7 +549,7 @@ predicted_classes_train, predicted_classes_test, N_params_deep_classifier = buil
                                                                                                         X_test = X_test)
 
 
-# In[ ]:
+# In[21]:
 
 
 # Time-Elapsed Training Deep Classifier
@@ -557,7 +558,7 @@ Architope_deep_classifier_training = time.time() - Architope_deep_classifier_tra
 
 # Make Prediction(s)
 
-# In[ ]:
+# In[22]:
 
 
 # Training Set
@@ -570,7 +571,7 @@ Architope_prediction_y_test = np.take_along_axis(predictions_test, predicted_cla
 
 # Compute Performance
 
-# In[ ]:
+# In[23]:
 
 
 # Compute Peformance
@@ -593,7 +594,7 @@ print(performance_Architope)
 
 # ### Model Complexity/Efficiency Metrics
 
-# In[ ]:
+# In[24]:
 
 
 # Compute Parameters for composite models #
@@ -635,14 +636,14 @@ print(Architope_Model_Complexity_full)
 # ### Architope with Logistic-Classifier Partitioning
 # #### Train Logistic Classifier (Benchmark)
 
-# In[ ]:
+# In[25]:
 
 
 # Time-Elapsed Training linear classifier
 Architope_logistic_classifier_training_begin = time.time()
 
 
-# In[ ]:
+# In[26]:
 
 
 parameters = {'penalty': ['none','l1', 'l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
@@ -656,14 +657,14 @@ partition_labels_training = np.argmin(training_quality,axis=-1)
 
 # #### Train Logistic Classifier
 
-# In[ ]:
+# In[27]:
 
 
 # Update User on shape of learned partition
 print(partition_labels_training)
 
 
-# In[ ]:
+# In[28]:
 
 
 # Update User #
@@ -680,7 +681,7 @@ classifier.fit(X_train, partition_labels_training)
 
 # #### Write Predicted Class(es)
 
-# In[ ]:
+# In[29]:
 
 
 # Training Set
@@ -695,7 +696,7 @@ Architope_prediction_y_test_logistic_BM = np.take_along_axis(predictions_test, p
 N_params_best_logistic = (classifier.best_estimator_.coef_.shape[0])*(classifier.best_estimator_.coef_.shape[1]) + len(classifier.best_estimator_.intercept_)
 
 
-# In[ ]:
+# In[30]:
 
 
 # Time-Elapsed Training linear classifier
@@ -704,7 +705,7 @@ Architope_logistic_classifier_training = time.time() - Architope_logistic_classi
 
 # #### Compute Performance
 
-# In[ ]:
+# In[31]:
 
 
 # Compute Peformance
@@ -722,14 +723,14 @@ print(performance_architope_ffNN_logistic)
 # ---
 # ## Bagged Feed-Forward Networks (ffNNs)
 
-# In[ ]:
+# In[32]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time_begin = time.time()
 
 
-# In[ ]:
+# In[33]:
 
 
 # Train Bagging Weights in-sample
@@ -743,14 +744,14 @@ bagged_prediction_test = bagging_coefficients.predict(predictions_test)
 N_bagged_parameters = len(bagging_coefficients.coef_) + 1
 
 
-# In[ ]:
+# In[34]:
 
 
 # Time for Bagging
 Bagging_ffNN_bagging_time = time.time() - Bagging_ffNN_bagging_time_begin
 
 
-# In[ ]:
+# In[35]:
 
 
 # Compute Peformance
@@ -766,7 +767,7 @@ print("Written Bagged Performance")
 print(performance_bagged_ffNN)
 
 
-# In[ ]:
+# In[36]:
 
 
 print("Random Partition: Generated!...Feature Generation Complete!")
@@ -775,7 +776,7 @@ print("Random Partition: Generated!...Feature Generation Complete!")
 # ## Vanilla ffNN
 # #### Reload Hyper-parameter Grid
 
-# In[ ]:
+# In[37]:
 
 
 # Re-Load Hyper-parameter Grid
@@ -786,14 +787,14 @@ exec(open('Helper_Functions.py').read())
 param_grid_Vanilla_Nets['input_dim'] = [X_train.shape[1]]
 
 
-# In[ ]:
+# In[38]:
 
 
 # Time for Bagging
 Vanilla_ffNN_time_beginn = time.time()
 
 
-# In[ ]:
+# In[39]:
 
 
 #X_train vanilla ffNNs
@@ -807,14 +808,14 @@ y_hat_train_Vanilla_ffNN, y_hat_test_Vanilla_ffNN, N_params_Vanilla_ffNN = build
                                                                                    X_test=X_test)
 
 
-# In[ ]:
+# In[40]:
 
 
 # Time for Bagging
 Vanilla_ffNN_time = time.time() - Vanilla_ffNN_time_beginn
 
 
-# In[ ]:
+# In[41]:
 
 
 # Update User #
@@ -824,7 +825,7 @@ print("Trained vanilla ffNNs")
 
 # #### Evaluate Performance
 
-# In[ ]:
+# In[42]:
 
 
 # Compute Peformance
@@ -840,7 +841,7 @@ print(performance_Vanilla_ffNN)
 
 # #### Compute Required Training Time(s)
 
-# In[ ]:
+# In[43]:
 
 
 # In-Line #
@@ -868,7 +869,7 @@ Bagged_ffNN_Time_parallel = partitioning_time + Architope_partitioning_max_time_
 
 # #### Write Required Training Times
 
-# In[ ]:
+# In[44]:
 
 
 # Update User #
@@ -897,7 +898,7 @@ print(Model_Training_times)
 
 # ## Run: Gradient Boosted Random Forest Regression
 
-# In[ ]:
+# In[45]:
 
 
 # Update User #
@@ -914,7 +915,7 @@ print('Training of Gradient-Boosted Random Forest: Complete!')
 # ## Training Result(s)
 # #### (Update) Write Required Training Times
 
-# In[ ]:
+# In[46]:
 
 
 # Update User #
@@ -949,7 +950,7 @@ print(Model_Training_times)
 # ### Prediction Metric(s)
 # #### Write Predictive Performance Dataframe(s)
 
-# In[ ]:
+# In[47]:
 
 
 # Write Training Performance
@@ -980,7 +981,7 @@ print(predictive_performance_training)
 
 # ### Model Complexity/Efficiency Metrics
 
-# In[ ]:
+# In[48]:
 
 
 # Compute Parameters for composite models #
@@ -1029,7 +1030,7 @@ print(Model_Complexity_Metrics)
 
 # # Summary
 
-# In[ ]:
+# In[49]:
 
 
 print(' ')
@@ -1097,9 +1098,10 @@ print(' ')
 print('😃😃 Have a great day!! 😃😃 ')
 
 
-# In[ ]:
+# In[81]:
 
 
+# sns.set()
 # Initialize Plot #
 #-----------------#
 plt.figure(num=None, figsize=(12, 12), dpi=80, facecolor='w', edgecolor='k')
@@ -1108,21 +1110,21 @@ plt.figure(num=None, figsize=(12, 12), dpi=80, facecolor='w', edgecolor='k')
 #----------------#
 # Plot Signal
 # plt.scatter(x,y,color='gray',label='$f(x)$',linestyle='--')
-plt.scatter(x_1,y_1,color='orange',label=r'$f_1(x)$',linestyle='--')
-plt.scatter(x_2,y_2,color='blue',label=r'$f_2(x)$',linestyle='--')
+plt.scatter(x_1,y_1,color='slategrey',label=r'$f_1(x)$',linestyle=(0,(1,1)),s=3,alpha=.9,marker=1)
+plt.scatter(x_2,y_2,color='dodgerblue',label=r'$f_2(x)$',linestyle=(0,(1,1)),s=3,alpha=.9,marker=1)
 
 #--------------------#
 # Benchmark Model(s) #
 #--------------------#
 # Plot ffNN
-plt.scatter(x,y_hat_train_Vanilla_ffNN, color = 'gray',linestyle="--",  label='ffNN')
-plt.scatter(x,Architope_prediction_y_train, color = 'black',linestyle="--",  label='tope')
+plt.scatter(x,y_hat_train_Vanilla_ffNN, color = 'darkmagenta',linestyle=(0,(1,10)),  label='ffNN',s=3,alpha=.95)
+plt.scatter(x,Architope_prediction_y_train, color = 'mediumseagreen',linestyle=(0,(1,10)), label='tope',s=3,alpha=.95)
 
 
 
 # Format Plot #
 #-------------#
-plt.legend(loc="upper left")
+plt.legend(loc="upper left",prop={'size': 10})
 plt.title("Model Predictions")
 
 # Export #
