@@ -77,7 +77,7 @@ The trajectory of a typical cryptocurrency's price process is best modeled by a 
 
 ![alt text](https://raw.githubusercontent.com/AnastasisKratsios/Architopes_Semisupervised/main/0_Experimental_Results/crypto/outputs/plotsANDfigures/CryptoMarketReturns.png)
 
-
+---
 
 ### 2) California Housing Market
 The [California Housing Price Dataset](https://github.com/ageron/handson-ml/tree/master/datasets/housing) is a dataset where an expert provided partition of the input space, based on geo-special features, is exogenously known.  This makes this dataset a good candidate for comparing our training Algorithm's ability to infer a good partition to a known "good partition".  Our models and their benchmarks achieves the following performance on:
@@ -114,6 +114,8 @@ The [California Housing Price Dataset](https://github.com/ageron/handson-ml/tree
 | Architope-Expert + Repartitioning |  15811.70576 |  6596.203372 |          13604 |  27210.296 |  3.019 |
 
 *(†) Eff is a non-standard metric, not included in the final paper.  It is defined by N_parameters x log(Test-set-MAE)*
+
+---
 
 ### 3) Synthetic Univariate Example
 Our last example allows us to visually scrutinize the difference between the feed-forward architecture and the architope.  Specifically, we qualitatively and quantitatively examine our architecture's ability (and its training algorithm) to learn patterns with jump discontinuities.  We turn to a univariate illustration to streamline our visualization of this phenomenon.  
