@@ -45,7 +45,7 @@ if trial_run == True:
                         'epochs': [1000],
                         'learning_rate': [0.0001],
                         'height': [500],
-                        'depth': [4],
+                        'depth': [2],
                         'input_dim':[15],
                         'output_dim':[1]}
 
