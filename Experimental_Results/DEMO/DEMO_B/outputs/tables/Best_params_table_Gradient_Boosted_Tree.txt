@@ -1,0 +1,7 @@
+\begin{tabular}{lrrrr}
+\toprule
+{} &  N Estimators &  Min Samples Leaf &  Learning Rate &  Max Depth \\
+\midrule
+0 &          1000 &                 5 &          0.001 &          6 \\
+\bottomrule
+\end{tabular}
