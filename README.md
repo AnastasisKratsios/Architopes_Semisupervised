@@ -2,6 +2,17 @@
 **Submitted to:** *Thirty-eighth International Conference on Machine Learning*
 
 ---
+#### Cite As:
+        @misc{ZamanlooyKratsios2021PiecewiseContinuousPCNNs,
+                title={Learning Sub-Patterns in Piecewise Continuous Functions}, 
+                author={Anastasis Kratsios and Behnoosh Zamanlooy},
+                year={2021},
+                eprint={2010.15571},
+                archivePrefix={arXiv},
+                primaryClass={cs.NE}
+               }
+
+---
 
 #### DEMO: 
 * In-sample approximation of discontinuous function f with discontinuities arising from two sub-patterns: f_1 and f_2 defined on a partition of the input space.  NB the (feed-forward neural network) ffNN cannot capture the sub-pattern behaviour while the architope (tope) can.
