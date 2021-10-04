@@ -133,10 +133,7 @@ def def_trainable_layers_Nice_Input_Output(height, depth, learning_rate, input_d
 #                                      Build Predictive Model                                    #
 #------------------------------------------------------------------------------------------------#
 
-def build_ffNN(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test_partial,X_test,NOCV=False):
-    # 
-    print(param_grid_in)
-    
+def build_ffNN(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test_partial,X_test,NOCV=False):    
     if NOCV == False:
         # Deep Feature Network
         Nice_Model_CV = tf.keras.wrappers.scikit_learn.KerasRegressor(build_fn=def_trainable_layers_Nice_Input_Output, verbose=True)
