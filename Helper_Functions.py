@@ -78,7 +78,6 @@ def def_trainable_layers_Nice_Input_Output(height, depth, learning_rate, input_d
     #----------------------------#
     # Maximally Interacting Layer #
     #-----------------------------#
-    # Initialize Inputs
     input_layer = tf.keras.Input(shape=(input_dim,))
     
     
@@ -134,20 +133,29 @@ def def_trainable_layers_Nice_Input_Output(height, depth, learning_rate, input_d
 #                                      Build Predictive Model                                    #
 #------------------------------------------------------------------------------------------------#
 
-def build_ffNN(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test_partial,X_test):
-
-    # Deep Feature Network
-    Nice_Model_CV = tf.keras.wrappers.scikit_learn.KerasRegressor(build_fn=def_trainable_layers_Nice_Input_Output, verbose=True)
+def build_ffNN(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test_partial,X_test,NOCV=False):
+    # 
+    print(param_grid_in)
     
-    # Randomized CV
-    Nice_Model_CVer = RandomizedSearchCV(estimator=Nice_Model_CV, 
-                                    n_jobs=n_jobs,
-                                    cv=KFold(n_folds, random_state=2020, shuffle=True),
-                                    param_distributions=param_grid_in,
-                                    n_iter=n_iter,
-                                    return_train_score=True,
-                                    random_state=2020,
-                                    verbose=10)
+    if NOCV == False:
+        # Deep Feature Network
+        Nice_Model_CV = tf.keras.wrappers.scikit_learn.KerasRegressor(build_fn=def_trainable_layers_Nice_Input_Output, verbose=True)
+
+        # Randomized CV
+        Nice_Model_CVer = RandomizedSearchCV(estimator=Nice_Model_CV,
+                                             n_jobs=n_jobs,
+                                             cv=KFold(n_folds, random_state=2020, shuffle=True),
+                                             param_distributions=param_grid_in,
+                                             n_iter=n_iter,
+                                             return_train_score=True,
+                                             random_state=2020,
+                                             verbose=10)
+    else:
+        Nice_Model_CVer = def_trainable_layers_Nice_Input_Output(height = param_grid_in['height'][0],
+                                                                 depth = param_grid_in['depth'][0],
+                                                                 learning_rate = param_grid_in['learning_rate'][0],
+                                                                 input_dim = param_grid_in['input_dim'][0],
+                                                                 output_dim = param_grid_in['output_dim'][0])
     
     # Fit Model #
     #-----------#
@@ -161,13 +169,17 @@ def build_ffNN(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test
     # Counter number of parameters #
     #------------------------------#
     # Extract Best Model
-    best_model = Nice_Model_CVer.best_estimator_
-    # Count Number of Parameters
-    N_params_best_ffNN = np.sum([np.prod(v.get_shape().as_list()) for v in best_model.model.trainable_variables])
+    if NOCV == False:
+        best_model = Nice_Model_CVer.best_estimator_
+        # Count Number of Parameters
+        N_params_best_ffNN = np.sum([np.prod(v.get_shape().as_list()) for v in best_model.model.trainable_variables])
     
     # Return Values #
     #---------------#
-    return y_hat_train, y_hat_test, N_params_best_ffNN
+    if NOCV == False:
+        return y_hat_train, y_hat_test, N_params_best_ffNN
+    else:
+        return y_hat_train, y_hat_test, 0
 
 # Update User
 #-------------#
@@ -199,20 +211,27 @@ def def_simple_deep_classifer(height, depth, learning_rate, input_dim, output_di
 #                                  Build Deep Classifier Model                                   #
 #------------------------------------------------------------------------------------------------#
 from tensorflow.keras import Sequential
-def build_simple_deep_classifier(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train,X_test):
-
-    # Deep Feature Network
-    CV_simple_deep_classifier = tf.keras.wrappers.scikit_learn.KerasClassifier(build_fn=def_simple_deep_classifer, verbose=True)
+def build_simple_deep_classifier(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test, NOCV=False):
     
-    # Randomized CV
-    CV_simple_deep_classifier_CVer = RandomizedSearchCV(estimator=CV_simple_deep_classifier, 
-                                    n_jobs=n_jobs,
-                                    cv=KFold(n_folds, random_state=2020, shuffle=True),
-                                    param_distributions=param_grid_in,
-                                    n_iter=n_iter,
-                                    return_train_score=True,
-                                    random_state=2020,
-                                    verbose=10)
+    if NOCV == True:
+        # Deep Feature Network
+        CV_simple_deep_classifier = tf.keras.wrappers.scikit_learn.KerasClassifier(build_fn=def_simple_deep_classifer, verbose=True)
+
+        # Randomized CV
+        CV_simple_deep_classifier_CVer = RandomizedSearchCV(estimator=CV_simple_deep_classifier, 
+                                        n_jobs=n_jobs,
+                                        cv=KFold(n_folds, random_state=2020, shuffle=True),
+                                        param_distributions=param_grid_in,
+                                        n_iter=n_iter,
+                                        return_train_score=True,
+                                        random_state=2020,
+                                        verbose=10)
+    else:
+        CV_simple_deep_classifier_CVer = def_simple_deep_classifer(height = param_grid_in['height'][0],
+                                                                   depth = param_grid_in['depth'][0],
+                                                                   learning_rate = param_grid_in['learning_rate'][0],
+                                                                   input_dim = param_grid_in['input_dim'][0],
+                                                                   output_dim = param_grid_in['output_dim'][0])
     
     # Fit
     CV_simple_deep_classifier_CVer.fit(X_train,y_train)
@@ -223,15 +242,19 @@ def build_simple_deep_classifier(n_folds , n_jobs, n_iter, param_grid_in, X_trai
     
     # Counter number of parameters #
     #------------------------------#
-    # Extract Best Model
-    best_model = CV_simple_deep_classifier_CVer.best_estimator_
-    # Count Number of Parameters
-    N_params_best_classifier = np.sum([np.prod(v.get_shape().as_list()) for v in best_model.model.trainable_variables])
-
+    if NOCV == True:
+        # Extract Best Model
+        best_model = CV_simple_deep_classifier_CVer.best_estimator_
+        # Count Number of Parameters
+        N_params_best_classifier = np.sum([np.prod(v.get_shape().as_list()) for v in best_model.model.trainable_variables])
     
-    # Return Values
-    return predicted_classes_train, predicted_classes_test, N_params_best_classifier
-
+    
+    # Return Values #
+    #---------------#
+    if NOCV == True:
+        return predicted_classes_train, predicted_classes_test, N_params_best_classifier
+    else:
+        return predicted_classes_train, predicted_classes_test, 0
 # Update User
 #-------------#
 print('Deep Classifier - Ready')

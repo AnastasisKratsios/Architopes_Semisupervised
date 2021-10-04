@@ -38,7 +38,7 @@ if trial_run == True:
                       'learning_rate': [0.0001],
                       'height': [2],
                        'depth': [1],
-                      'input_dim':[15],
+                      'input_dim':[1],
                        'output_dim':[1]}
 
     param_grid_Deep_Classifier = {'batch_size': [16],
@@ -46,7 +46,7 @@ if trial_run == True:
                         'learning_rate': [0.0001],
                         'height': [2],
                         'depth': [1],
-                        'input_dim':[15],
+                        'input_dim':[1],
                         'output_dim':[1]}
 
                        

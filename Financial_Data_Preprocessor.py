@@ -7,7 +7,7 @@
 
 # ### Auxiliary Initializations
 
-# In[11]:
+# In[1]:
 
 
 #!/usr/bin/env python
@@ -23,7 +23,7 @@
 # (Semi-)Classical Regressor(s)
 from scipy.interpolate import interp1d
 import statsmodels.api as sm
-import rpy2.robjects as robjects # Work directly from R (since smoothing splines packages is better)
+# import rpy2.robjects as robjects # Work directly from R (since smoothing splines packages is better)
 from sklearn.svm import SVR
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.linear_model import ElasticNetCV
@@ -72,7 +72,7 @@ from sklearn.tree import DecisionTreeRegressor
 import random
 
 # Rough Signals
-from fbm import FBM
+# from fbm import FBM
 
 # Tensorflow
 import tensorflow as tf
@@ -91,7 +91,7 @@ from tensorflow.keras.optimizers import Adam
 # Operating-System Related
 import os
 from pathlib import Path
-import pickle
+# import pickle
 #from sklearn.externals import joblib
 
 # Timeing

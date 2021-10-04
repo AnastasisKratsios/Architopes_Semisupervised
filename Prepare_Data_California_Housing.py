@@ -116,6 +116,7 @@ X = pd.get_dummies(X)
 X = X.drop(columns='total_bedrooms')
 # Define Training / Testing Sets
 X_train, y_train, X_test, y_test = prepare_data(X,False)
+data_y = y_train
 
 
 # Fit Standardizer
