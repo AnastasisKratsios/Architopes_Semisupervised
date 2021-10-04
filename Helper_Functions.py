@@ -156,7 +156,10 @@ def build_ffNN(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test
     
     # Fit Model #
     #-----------#
-    Nice_Model_CVer.fit(X_train,y_train)
+    if NOCV == False:
+        Nice_Model_CVer.fit(X_train,y_train)
+    else:
+        Nice_Model_CVer.fit(X_train,y_train,epochs = param_grid_in['epochs'][0])
 
     # Write Predictions #
     #-------------------#
@@ -230,8 +233,12 @@ def build_simple_deep_classifier(n_folds , n_jobs, n_iter, param_grid_in, X_trai
                                                                    input_dim = param_grid_in['input_dim'][0],
                                                                    output_dim = param_grid_in['output_dim'][0])
     
-    # Fit
-    CV_simple_deep_classifier_CVer.fit(X_train,y_train)
+    # Fit Model #
+    #-----------#
+    if NOCV == False:
+        CV_simple_deep_classifier_CVer.fit(X_train,y_train)
+    else:
+        CV_simple_deep_classifier_CVer.fit(X_train,y_train,epochs = param_grid_in['epochs'][0])
 
     # Make Prediction(s)
     predicted_classes_train = CV_simple_deep_classifier_CVer.predict(X_train)
