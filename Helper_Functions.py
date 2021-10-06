@@ -179,7 +179,8 @@ def build_ffNN(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test
     if NOCV == False:
         return y_hat_train, y_hat_test, N_params_best_ffNN
     else:
-        return y_hat_train, y_hat_test, 0
+        N_neurons_used = (param_grid_in['depth'][0])*(param_grid_in['height'][0])
+        return y_hat_train, y_hat_test, N_neurons_used
 
 # Update User
 #-------------#
