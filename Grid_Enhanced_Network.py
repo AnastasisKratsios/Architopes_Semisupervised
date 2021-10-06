@@ -1,6 +1,6 @@
 # Which financial dataset do you want to consider (NB this meta-parameter does not impact the non-financial architopes module)
 # Options: AAPL, SnP, or crypto (or Motivational_Example for DEMO version!)
-Option_Function = "Motivational_Example"
+Option_Function = "crypto"
 
 # Is this a trial run (to test hardware?)
 trial_run = True
@@ -34,18 +34,18 @@ if trial_run == True:
     # Model Parameters
     #------------------#
     param_grid_Vanilla_Nets = {'batch_size': [16],
-                    'epochs': [200],
+                    'epochs': [50],
                       'learning_rate': [0.0001],
                       'height': [400],
-                       'depth': [2],
+                       'depth': [1],
                       'input_dim':[1],
                        'output_dim':[1]}
 
     param_grid_Deep_Classifier = {'batch_size': [16],
-                        'epochs': [200],
+                        'epochs': [100],
                         'learning_rate': [0.0001],
-                        'height': [300],
-                        'depth': [3],
+                        'height': [50],
+                        'depth': [2],
                         'input_dim':[1],
                         'output_dim':[1]}
 
