@@ -34,9 +34,9 @@ if trial_run == True:
     # Model Parameters
     #------------------#
     param_grid_Vanilla_Nets = {'batch_size': [16],
-                    'epochs': [50],
+                    'epochs': [75],
                       'learning_rate': [0.00001],
-                      'height': [500],
+                      'height': [800],
                        'depth': [2],
                       'input_dim':[1],
                        'output_dim':[1]}
