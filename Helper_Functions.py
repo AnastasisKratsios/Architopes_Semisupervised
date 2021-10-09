@@ -283,3 +283,9 @@ def reporter(y_train_hat_in,y_test_hat_in,y_train_in,y_test_in):
     Performance_dataframe.index = ["MAE","MSE","MAPE"]
     # return output
     return Performance_dataframe
+
+
+# Other Functions
+def softminn(x):
+    softmin_output = np.exp(-x) / np.sum(np.exp(-x), axis=0)
+    return softmin_output
