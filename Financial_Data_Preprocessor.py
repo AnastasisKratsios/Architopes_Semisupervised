@@ -7,7 +7,34 @@
 
 # ### Auxiliary Initializations
 
-# In[1]:
+# In[10]:
+
+
+# # Test-size Ratio
+# test_size_ratio = 1-(1/48)
+# min_width = 200
+# # Ablation Finess
+# N_plot_finess = 10
+# # min_parts_threshold = .001; max_parts_threshold = 0.9
+# N_min_parts = 1; N_max_plots = 10
+# Tied_Neurons_Q = True
+# # Partition with Inputs (determine parts with domain) or outputs (determine parts with image)
+# Partition_using_Inputs = True
+# # Cuttoff Level
+# gamma = .5
+# # Softmax Layer instead of sigmoid
+# softmax_layer = True
+
+# #TEMP FOR DEBUGGING
+# # Load Packages/Modules
+# exec(open('Init_Dump.py').read())
+# # Load Hyper-parameter Grid
+# exec(open('Grid_Enhanced_Network.py').read())
+# # Load Helper Function(s)
+# exec(open('Helper_Functions.py').read())
+
+
+# In[11]:
 
 
 #!/usr/bin/env python
@@ -144,17 +171,22 @@ Train_step_proportion = test_size_ratio
 
 # ### Prepare Data
 
-# In[12]:
+# In[19]:
 
 
 #------------------------#
 # Run External Notebooks #
 #------------------------#
 if Option_Function == "SnP" or "AAPL":
-    print('Get S&P Data')
+    #--------------#
+    # Get S&P Data #
+    #--------------#
     #=# SnP Constituents #=#
     # Load Data
     snp_data = pd.read_csv('inputs/data/snp500_data/snp500-adjusted-close.csv')
+    # Impute data
+    snp_data = snp_data.interpolate(method='linear')
+    snp_data = snp_data.fillna(value=None, method='backfill', axis=None, limit=None, downcast=None)
     # Format Data
     ## Index by Time
     snp_data['date'] = pd.to_datetime(snp_data['date'],infer_datetime_format=True)
@@ -162,13 +194,18 @@ if Option_Function == "SnP" or "AAPL":
 
     #=# SnP Index #=#
     ## Read Regression Target
-    snp_index_target_data = pd.read_csv('inputs/data/snp500_data/GSPC.csv')
+#     snp_index_target_data = pd.read_csv('inputs/data/snp500_data/GSPC.csv')
+    snp_index_target_data = pd.read_csv('inputs/data/snp500_data/SNP.csv',sep='\t')
+    # Impute data
+    snp_index_target_data = snp_index_target_data.interpolate(method='linear')
+    snp_index_target_data = snp_index_target_data.fillna(value=None, method='backfill', axis=None, limit=None, downcast=None)
+    TailLength = int(np.minimum(snp_index_target_data.shape[0],snp_data.shape[0]))
     ## Get (Reference) Dates
-    dates_temp = pd.to_datetime(snp_data['date'],infer_datetime_format=True).tail(600)
+    dates_temp = pd.to_datetime(snp_data['date'],infer_datetime_format=True).tail(TailLength)
     ## Format Target
-    snp_index_target_data = pd.DataFrame({'SnP_Index': snp_index_target_data['Close'],'date':dates_temp.reset_index(drop=True)})
-    snp_index_target_data['date'] = pd.to_datetime(snp_index_target_data['date'],infer_datetime_format=True)
-    snp_index_target_data.set_index('date', drop=True, inplace=True)
+    snp_index_target_data = pd.DataFrame({'SnP_Index': snp_index_target_data['sp500'],'DATE':dates_temp.reset_index(drop=True)})
+    snp_index_target_data['DATE'] = pd.to_datetime(snp_index_target_data['DATE'],infer_datetime_format=True)
+    snp_index_target_data.set_index('DATE', drop=True, inplace=True)
     snp_index_target_data.index.names = [None]
     #-------------------------------------------------------------------------------#
     
@@ -176,7 +213,7 @@ if Option_Function == "SnP" or "AAPL":
     snp_data.set_index('date', drop=True, inplace=True)
     snp_data.index.names = [None]
     ## Get Rid of NAs and Expired Trends
-    snp_data = (snp_data.tail(600)).dropna(axis=1).fillna(0)
+    snp_data = (snp_data.tail(TailLength)).dropna(axis=1).fillna(0)
     
     #---------------------------------------------------------------------------------------------------#
     #---------------------------------------------------------------------------------------------------#
@@ -184,7 +221,6 @@ if Option_Function == "SnP" or "AAPL":
     #---------------------------------------------------------------------------------------------------#
     #---------------------------------------------------------------------------------------------------#
     if Option_Function == "AAPL":
-        print('Get AAPL Data')
         snp_index_target_data = snp_data[{'AAPL'}]
         snp_data = snp_data[{'IBM','QCOM','MSFT','CSCO','ADI','MU','MCHP','NVR','NVDA','GOOGL','GOOG'}]
     #---------------------------------------------------------------------------------------------------#
@@ -235,14 +271,16 @@ if Option_Function == "SnP" or "AAPL":
     plt.savefig('./outputs/plotsANDfigures/SNP_Data_returns.pdf', format='pdf')
 
 
-# In[ ]:
+# In[20]:
 
 
 #------------------------#
 # Run External Notebooks #
 #------------------------#
 if Option_Function == "crypto":
-    print('Get Crypto Data')
+    #--------------#
+    # Prepare Data #
+    #--------------#
     # Read Dataset
     crypto_data = pd.read_csv('inputs/data/cryptocurrencies/Cryptos_All_in_one.csv')
     # Format Date-Time
@@ -304,13 +342,15 @@ if Option_Function == "crypto":
     
     
     # Set option to SnP to port rest of pre-processing automatically that way
-#     Option_Function = "SnP"
+    Option_Function = "SnP"
 
 
-# In[ ]:
+# In[21]:
 
 
 # ICML Coercsion
 y_train = np.array(data_y).reshape(-1)
 y_test = np.array(data_y_test).reshape(-1)
 
+
+# ---
