@@ -151,9 +151,7 @@ Train_step_proportion = test_size_ratio
 # Run External Notebooks #
 #------------------------#
 if Option_Function == "SnP" or "AAPL":
-    #--------------#
-    # Get S&P Data #
-    #--------------#
+    print('Get S&P Data')
     #=# SnP Constituents #=#
     # Load Data
     snp_data = pd.read_csv('inputs/data/snp500_data/snp500-adjusted-close.csv')
@@ -186,6 +184,7 @@ if Option_Function == "SnP" or "AAPL":
     #---------------------------------------------------------------------------------------------------#
     #---------------------------------------------------------------------------------------------------#
     if Option_Function == "AAPL":
+        print('Get AAPL Data')
         snp_index_target_data = snp_data[{'AAPL'}]
         snp_data = snp_data[{'IBM','QCOM','MSFT','CSCO','ADI','MU','MCHP','NVR','NVDA','GOOGL','GOOG'}]
     #---------------------------------------------------------------------------------------------------#
@@ -243,9 +242,7 @@ if Option_Function == "SnP" or "AAPL":
 # Run External Notebooks #
 #------------------------#
 if Option_Function == "crypto":
-    #--------------#
-    # Prepare Data #
-    #--------------#
+    print('Get Crypto Data')
     # Read Dataset
     crypto_data = pd.read_csv('inputs/data/cryptocurrencies/Cryptos_All_in_one.csv')
     # Format Date-Time
@@ -307,7 +304,7 @@ if Option_Function == "crypto":
     
     
     # Set option to SnP to port rest of pre-processing automatically that way
-    Option_Function = "SnP"
+#     Option_Function = "SnP"
 
 
 # In[ ]:
