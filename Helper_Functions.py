@@ -423,7 +423,7 @@ def build_deep_classifier_random(X_train_in,
     # Initialize Classifier
     parameters = {'penalty': ['none','l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
     lr = LogisticRegression(random_state=2020)
-    cv = RepeatedStratifiedKFold(n_splits = 4, n_repeats=n_iter, random_state=0)
+    cv = RepeatedStratifiedKFold(n_splits = 2, n_repeats=n_iter, random_state=0)
     classifier = RandomizedSearchCV(lr, parameters, random_state=2020)
     # Train Logistic Classifier #
     #---------------------------#
