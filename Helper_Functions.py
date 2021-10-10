@@ -191,12 +191,13 @@ print('Deep Feature Builder - Ready')
 from scipy import sparse
 from scipy.sparse import random as randsp
 from scipy.sparse import csr_matrix
-from sklearn.model_selection import cross_val_score
-from sklearn import linear_model
+# from sklearn import linear_model
+from sklearn.linear_model import LinearRegression
 def build_ffNN_random(X_train_in,X_train_in_full,X_test_in,y_train_in,param_grid_in):
     # Initializations
     ## Model
-    clf = linear_model.Lasso(alpha=0.1)
+#     clf = linear_model.Lasso(alpha=0.1)
+    clf = LinearRegression()
     ## Features to Randomize
     X_train_rand_features = X_train_in.to_numpy()
     X_train_full_rand_features = X_train_in_full.to_numpy()
