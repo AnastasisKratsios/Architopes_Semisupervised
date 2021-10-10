@@ -88,7 +88,7 @@ if test_size_ratio < 1:
     X_train, X_test, y_train, y_test = sk.train_test_split(x,
                                                            y,
                                                            test_size=test_size_ratio,
-                                                           random_state=42)
+                                                           random_state=42,shuffle=False)
     # Format
     X_train = pd.DataFrame({"X": X_train})
     X_test = pd.DataFrame({"X": X_test})
@@ -106,6 +106,9 @@ else:
 # Coersion
 y_train = np.array(y_train).reshape(-1)
 y_test = np.array(y_test).reshape(-1)
+
+
+
 
 
 # ### Split Sub-Patterns
