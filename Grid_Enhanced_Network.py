@@ -1,6 +1,6 @@
 # Which financial dataset do you want to consider (NB this meta-parameter does not impact the non-financial architopes module)
 # Options: AAPL, SnP, or crypto (or Motivational_Example for DEMO version!)
-Option_Function = "Motivational_Example" 
+Option_Function = "Sythetic" 
 
 # Is this a trial run (to test hardware?)
 trial_run = True
@@ -26,7 +26,7 @@ if trial_run == True:
     n_jobs = 4
     # Number of Random CV Draws
     n_iter = 1
-    n_iter_trees = 40
+    n_iter_trees = 10
     # Number of CV Folds
     CV_folds = 2
 
@@ -34,16 +34,16 @@ if trial_run == True:
     # Model Parameters
     #------------------#
     param_grid_FFNNs = {'batch_size': [16],
-                    'epochs': [200],
+                    'epochs': [100],
                       'learning_rate': [0.00001],
-                      'height': [400],
-                      'depth': [3],
+                      'height': [200],
+                      'depth': [2],
                       'input_dim':[1],
                       'output_dim':[1]}
     param_grid_Vanilla_Nets = {'batch_size': [16],
-                    'epochs': [200],
+                    'epochs': [100],
                       'learning_rate': [0.00001],
-                      'height': [800],
+                      'height': [200],
                       'depth': [2],
                       'input_dim':[1],
                       'output_dim':[1]}
@@ -51,7 +51,7 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [1000],
+                        'height': [2000],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
@@ -60,8 +60,8 @@ if trial_run == True:
     # Random Forest Grid
     #--------------------#
     Rand_Forest_Grid = {'learning_rate': [0.01,0.001],
-                        'max_depth': [2,8,12],
-                        'min_samples_leaf': [2,3,5,10],
+                        'max_depth': [2,3,4],
+                        'min_samples_leaf': [2,3,5],
                        'n_estimators': [200],
                        }
     
