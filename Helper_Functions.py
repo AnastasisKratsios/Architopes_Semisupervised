@@ -187,6 +187,54 @@ def build_ffNN(n_folds , n_jobs, n_iter, param_grid_in, X_train, y_train, X_test
 print('Deep Feature Builder - Ready')
 
 
+## Randomized Version
+from scipy import sparse
+from scipy.sparse import random as randsp
+from scipy.sparse import csr_matrix
+from sklearn.model_selection import cross_val_score
+from sklearn import linear_model
+def build_ffNN_random(X_train_in,X_test_in,y_train_in,param_grid_in):
+    # Initializations
+    ## Model
+    clf = linear_model.Lasso(alpha=0.1)
+    ## Features to Randomize
+    X_train_rand_features = X_train_in.to_numpy()
+    X_test_rand_features = X_test_in.to_numpy()
+    N_Random_Features = param_grid_in['height'][0]
+    N_Random_Features_Depth = param_grid_in['depth'][0]
+    for depth in range(N_Random_Features_Depth):
+        # Get Random Features
+        #---------------------------------------------------------------------------------------------------#
+        Weights_rand = randsp(m=(X_train_rand_features.shape[1]),n=N_Random_Features,density = 0.75)
+        biases_rand = np.random.uniform(low=-.5,high=.5,size = N_Random_Features)
+        ### Apply Random (hidden) Weights
+        X_train_rand_features = sparse.csr_matrix.dot(X_train_rand_features,Weights_rand)
+        #### Apply Random (hidden) Biases
+        X_train_rand_features = X_train_rand_features + biases_rand
+        X_train_rand_features = np.sin(X_train_rand_features)
+        #### Compress
+        X_train_rand_features = sparse.csr_matrix(X_train_rand_features)
+
+        #------# Test #-------------#
+        #### Apply Random (hidden) Weights
+        X_test_rand_features = sparse.csr_matrix.dot(X_test_rand_features,Weights_rand) 
+        #### Apply Random (hidden) Biases
+        X_test_rand_features = X_test_rand_features + biases_rand
+        #### Apply Discontinuous (Step) Activation function
+        X_test_rand_features = np.sin(X_test_rand_features)
+        #### Compress
+        X_test_rand_features = sparse.csr_matrix(X_train_rand_features)
+    # Get regressor 
+    clf.fit(X_train_rand_features,y_train_in)
+    y_hat_train = clf.predict(X_train_rand_features)
+    ### Predict
+    y_hat_test = clf.predict(X_test_rand_features)
+    
+    # Count Parameters
+    N_parameters = (N_Random_Features * N_Random_Features_Depth) + N_Random_Features*(param_grid_in['input_dim'][0]+param_grid_in['output_dim'][0])
+    # Return Computations
+    return y_hat_train, y_hat_test, N_parameters
+
 
 #------------------------------------------------------------------------------------------------#
 #                                      Define Predictive Model                                   #
