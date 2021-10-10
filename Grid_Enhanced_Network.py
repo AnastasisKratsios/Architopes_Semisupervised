@@ -33,6 +33,13 @@ if trial_run == True:
     
     # Model Parameters
     #------------------#
+    param_grid_FFNNs = {'batch_size': [16],
+                    'epochs': [100],
+                      'learning_rate': [0.00001],
+                      'height': [200],
+                      'depth': [3],
+                      'input_dim':[1],
+                      'output_dim':[1]}
     param_grid_Vanilla_Nets = {'batch_size': [16],
                     'epochs': [200],
                       'learning_rate': [0.00001],
