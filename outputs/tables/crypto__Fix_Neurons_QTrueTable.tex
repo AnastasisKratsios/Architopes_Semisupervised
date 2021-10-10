@@ -2,15 +2,16 @@
 \centering
 \caption{Prediction and Complexity Metrics: crypto}
 \label{tab__crypto__Fix_Neurons_QTrue}
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrlrr}
 \toprule
-{} &       MAE &  P. Time &  L. Time &      N. Par &    N. Par/x \\
+{} &         MAE &  L. Time & P. Time &      N. Par &    N. Par/x \\
 \midrule
-FFNN     & 5309.3951 &  31.0535 &  31.0535 &   1600.0000 &   1600.0000 \\
-GBRF     &  215.8218 &   2.3205 &   2.3205 & 447000.0000 & 447000.0000 \\
-FFNN-BAG &  131.1150 &   0.0272 &   1.6031 & 597510.0000 & 597510.0000 \\
-FFNN-LGT &  209.3741 &   0.2120 &   1.7880 & 642702.0000 &   5960.0000 \\
-PCNN     &   73.3959 &   2.0744 &   3.6503 &   5860.0000 & 643400.0000 \\
+FFNN     &   5115.1729 &  22.4914 &       - &   1600.0000 &   1600.0000 \\
+FFNN-rnd & 240775.6675 &   0.0023 &       - &   1600.0000 &   1600.0000 \\
+FFNN-BAG &    131.1150 &   0.0272 &  1.6031 & 597510.0000 & 597510.0000 \\
+FFNN-LGT &    209.3741 &   0.2120 &   1.788 & 642702.0000 &   5960.0000 \\
+GBRF     &    215.8218 &   2.3205 &       - & 447000.0000 & 447000.0000 \\
+PCNN     &     73.3959 &   2.0744 &  3.6503 &   5860.0000 & 643400.0000 \\
 \bottomrule
 \end{tabular}
 \end{table}
