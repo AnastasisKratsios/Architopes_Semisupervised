@@ -418,8 +418,8 @@ def build_deep_classifier_random(X_train_in,
     # Train Logistic Classifier #
     #---------------------------#
     warnings.simplefilter("ignore") # Supress warnings
-    partition_labels_training = np.argmin(training_quality,axis=-1) # Initialize Classes Labels
-    classifier.fit(X_train_rand_features, training_quality) # Fit Grid-Searched Classifiers
+#     partition_labels_training = np.argmin(training_quality,axis=-1) # Initialize Classes Labels
+    classifier.fit(X_train_rand_features, classes_in) # Fit Grid-Searched Classifiers
     # Training Set
     predicted_classes_train = classifier.best_estimator_.predict(X_train_full_rand_features).reshape(-1,1)
     PCNN_prediction_y_train = np.take_along_axis(predictions_train_in, predicted_classes_train, axis=1)
