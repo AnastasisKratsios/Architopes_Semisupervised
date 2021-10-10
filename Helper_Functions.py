@@ -407,10 +407,18 @@ def build_deep_classifier_random(X_train_in,
         X_test_rand_features = np.sin(X_test_rand_features)
         #### Compress
         X_test_rand_features = sparse.csr_matrix(X_test_rand_features)
+#     if isinstance(X_train_rand_features, np.ndarray): #Coercsion
+    X_train_rand_features = X_train_rand_features.toarray()
+#     if isinstance(X_train_full_rand_features, np.ndarray): #Coercsion
+    X_train_full_rand_features = X_train_full_rand_features.toarray()
+#     if isinstance(X_test_rand_features, np.ndarray): #Coercsion
+    X_test_rand_features = X_test_rand_features.toarray()
     ## Add Skip-Connection
-    X_train_rand_features = np.concatenate((X_train_full,X_train_rand_features),axis=1)
+    print('Added Skip Connections')
+    X_train_rand_features = np.concatenate((X_train_in,X_train_rand_features),axis=1)
     X_train_full_rand_features = np.concatenate((X_train_in_full,X_train_full_rand_features),axis=1)
     X_test_rand_features = np.concatenate((X_test,X_test_rand_features),axis=1)
+    print(X_test_rand_features.shape)
     print('Get Classifier')
     # Initialize Classifier
     parameters = {'penalty': ['none','l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
@@ -420,7 +428,6 @@ def build_deep_classifier_random(X_train_in,
     # Train Logistic Classifier #
     #---------------------------#
     warnings.simplefilter("ignore") # Supress warnings
-#     partition_labels_training = np.argmin(training_quality,axis=-1) # Initialize Classes Labels
     classifier.fit(X_train_rand_features, classes_in) # Fit Grid-Searched Classifiers
     # Training Set
     predicted_classes_train = classifier.best_estimator_.predict(X_train_full_rand_features).reshape(-1,1)
