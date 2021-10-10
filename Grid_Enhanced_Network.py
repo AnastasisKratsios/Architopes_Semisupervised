@@ -1,6 +1,6 @@
 # Which financial dataset do you want to consider (NB this meta-parameter does not impact the non-financial architopes module)
 # Options: AAPL, SnP, or crypto (or Motivational_Example for DEMO version!)
-Option_Function = "crypto" 
+Option_Function = "Motivational_Example" 
 
 # Is this a trial run (to test hardware?)
 trial_run = True
@@ -34,28 +34,28 @@ if trial_run == True:
     # Model Parameters
     #------------------#
     param_grid_Vanilla_Nets = {'batch_size': [16],
-                    'epochs': [50],
-                      'learning_rate': [0.00001],
-                      'height': [800],
-                      'depth': [2],
+                    'epochs': [20],
+                      'learning_rate': [0.1],
+                      'height': [20],
+                      'depth': [1],
                       'input_dim':[1],
                       'output_dim':[1]}
 
     param_grid_Deep_Classifier = {'batch_size': [16],
-                        'epochs': [200],
+                        'epochs': [800],
                         'learning_rate': [0.00001],
-                        'height': [400],
-                        'depth': [2],
+                        'height': [600],
+                        'depth': [4],
                         'input_dim':[1],
                         'output_dim':[1]}
 
                        
     # Random Forest Grid
     #--------------------#
-    Rand_Forest_Grid = {'learning_rate': [0.1],
-                        'max_depth': [2],
-                        'min_samples_leaf': [1],
-                       'n_estimators': [10],
+    Rand_Forest_Grid = {'learning_rate': [0.01],
+                        'max_depth': [6],
+                        'min_samples_leaf': [2,3,45],
+                       'n_estimators': [200],
                        }
     
 else:
