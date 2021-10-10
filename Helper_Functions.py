@@ -371,14 +371,13 @@ def build_deep_classifier_random(X_train_in,
     ###----------------------------------------------------###
     print('Generating Random Deep Features for Deep Zero-Sets')
     ## Features to Randomize
-    if isinstance(X_train_in, pd.DataFrame):
-        X_train_rand_features = X_train_in.to_numpy()
-        X_train_full_rand_features = X_train_in_full.to_numpy()
-        X_test_rand_features = X_test_in.to_numpy()
-    else:
-        X_train_rand_features = X_train_in
-        X_train_full_rand_features = X_train_in_full
-        X_test_rand_features = X_test_in
+    if isinstance(X_train_in, pd.DataFrame): #Coercsion
+        X_train_in = X_train_in.to_numpy()
+        X_train_in_full = X_train_in_full.to_numpy()
+        X_test_in = X_test_in.to_numpy()
+    X_train_rand_features = X_train_in
+    X_train_full_rand_features = X_train_in_full
+    X_test_rand_features = X_test_in
     N_Random_Features = param_grid_in['height'][0]
     N_Random_Features_Depth = param_grid_in['depth'][0]
     for depth in range(N_Random_Features_Depth):
@@ -408,7 +407,10 @@ def build_deep_classifier_random(X_train_in,
         X_test_rand_features = np.sin(X_test_rand_features)
         #### Compress
         X_test_rand_features = sparse.csr_matrix(X_test_rand_features)
-
+    ## Add Skip-Connection
+    X_train_rand_features = np.concatenate((X_train_full,X_train_rand_features),axis=1)
+    X_train_full_rand_features = np.concatenate((X_train_in_full,X_train_full_rand_features),axis=1)
+    X_test_rand_features = np.concatenate((X_test,X_test_rand_features),axis=1)
     print('Get Classifier')
     # Initialize Classifier
     parameters = {'penalty': ['none','l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
