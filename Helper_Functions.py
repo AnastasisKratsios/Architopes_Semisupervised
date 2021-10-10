@@ -357,6 +357,82 @@ def build_simple_deep_classifier(n_folds , n_jobs, n_iter, param_grid_in, X_trai
 print('Deep Classifier - Ready')
 
 
+#------------------------------------------------------------------------------------------------#
+#                            Build Deep Classifier via Randomized Approach                       #
+#------------------------------------------------------------------------------------------------#
+
+def build_deep_classifier_random(X_train_in,
+                                 X_train_in_full,
+                                 X_test_in,
+                                 predictions_test_in,
+                                 predictions_train_in,
+                                 classes_in,
+                                 param_grid_in):
+    ###----------------------------------------------------###
+    print('Generating Random Deep Features for Deep Zero-Sets')
+    ## Features to Randomize
+    if isinstance(X_train_in, pd.DataFrame):
+        X_train_rand_features = X_train_in.to_numpy()
+        X_train_full_rand_features = X_train_in_full.to_numpy()
+        X_test_rand_features = X_test_in.to_numpy()
+    else:
+        X_train_rand_features = X_train_in
+        X_train_full_rand_features = X_train_in_full
+        X_test_rand_features = X_test_in
+    N_Random_Features = param_grid_in['height'][0]
+    N_Random_Features_Depth = param_grid_in['depth'][0]
+    for depth in range(N_Random_Features_Depth):
+        # Get Random Features
+        #---------------------------------------------------------------------------------------------------#
+        Weights_rand = randsp(m=(X_train_rand_features.shape[1]),n=N_Random_Features,density = 0.75)
+        biases_rand = np.random.uniform(low=-.5,high=.5,size = N_Random_Features)
+        ### Apply Random (hidden) Weights
+        X_train_rand_features = sparse.csr_matrix.dot(X_train_rand_features,Weights_rand)
+        X_train_full_rand_features = sparse.csr_matrix.dot(X_train_full_rand_features,Weights_rand)
+        #### Apply Random (hidden) Biases
+        X_train_rand_features = X_train_rand_features + biases_rand
+        X_train_rand_features = np.sin(X_train_rand_features)
+        #####
+        X_train_full_rand_features = X_train_full_rand_features + biases_rand
+        X_train_full_rand_features = np.sin(X_train_full_rand_features)
+        #### Compress
+        X_train_rand_features = sparse.csr_matrix(X_train_rand_features)
+        X_train_full_rand_features = sparse.csr_matrix(X_train_full_rand_features)
+
+        #------# Test #-------------#
+        #### Apply Random (hidden) Weights
+        X_test_rand_features = sparse.csr_matrix.dot(X_test_rand_features,Weights_rand) 
+        #### Apply Random (hidden) Biases
+        X_test_rand_features = X_test_rand_features + biases_rand
+        #### Apply Discontinuous (Step) Activation function
+        X_test_rand_features = np.sin(X_test_rand_features)
+        #### Compress
+        X_test_rand_features = sparse.csr_matrix(X_test_rand_features)
+
+    print('Get Classifier')
+    # Initialize Classifier
+    parameters = {'penalty': ['none','l2'], 'C': [0.1, 0.5, 1.0, 10, 100, 1000]}
+    lr = LogisticRegression(random_state=2020)
+    cv = RepeatedStratifiedKFold(n_splits = 4, n_repeats=n_iter, random_state=0)
+    classifier = RandomizedSearchCV(lr, parameters, random_state=2020)
+    # Train Logistic Classifier #
+    #---------------------------#
+    warnings.simplefilter("ignore") # Supress warnings
+    partition_labels_training = np.argmin(training_quality,axis=-1) # Initialize Classes Labels
+    classifier.fit(X_train_rand_features, training_quality) # Fit Grid-Searched Classifiers
+    # Training Set
+    predicted_classes_train = classifier.best_estimator_.predict(X_train_full_rand_features).reshape(-1,1)
+    PCNN_prediction_y_train = np.take_along_axis(predictions_train_in, predicted_classes_train, axis=1)
+    # Testing Set
+    predicted_classes_test = classifier.best_estimator_.predict(X_test_rand_features).reshape(-1,1)
+    PCNN_prediction_y_test = np.take_along_axis(predictions_test_in, predicted_classes_test, axis=1)
+    # Extract Number of Parameters Logistic Regressor
+    N_params_deep_Classifier = (classifier.best_estimator_.coef_.shape[0])*(classifier.best_estimator_.coef_.shape[1]) + len(classifier.best_estimator_.intercept_)
+
+    # Count Parameters
+    N_parameters = N_params_deep_Classifier + N_Random_Features*(param_grid_in['input_dim'][0]+param_grid_in['output_dim'][0])
+    # Get Outputs
+    return PCNN_prediction_y_train, PCNN_prediction_y_test, N_parameters
 
 #-------------------------------#
 #=### Results & Summarizing ###=#
