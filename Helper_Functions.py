@@ -248,23 +248,56 @@ def build_ffNN_random(X_train_in,X_train_in_full,X_test_in,y_train_in,param_grid
 #------------------------------------------------------------------------------------------------#
 #                                      Define Predictive Model                                   #
 #------------------------------------------------------------------------------------------------#
+# Keras
+# def def_simple_deep_classifer(height, depth, learning_rate, input_dim, output_dim):
+#     # Initialize Simple Deep Classifier
+#     simple_deep_classifier = tf.keras.Sequential()
+#     for d_i in range(depth):
+#         simple_deep_classifier.add(tf.keras.layers.Dense(height, activation='relu'))
 
-def def_simple_deep_classifer(height, depth, learning_rate, input_dim, output_dim):
-    # Initialize Simple Deep Classifier
-    simple_deep_classifier = tf.keras.Sequential()
-    for d_i in range(depth):
-        simple_deep_classifier.add(tf.keras.layers.Dense(height, activation='relu'))
+#     simple_deep_classifier.add(tf.keras.layers.Dense(output_dim, activation='sigmoid'))
 
-    simple_deep_classifier.add(tf.keras.layers.Dense(output_dim, activation='sigmoid'))
-
-    # Compile Simple Deep Classifier
-    simple_deep_classifier.compile(optimizer='adam',
-                  loss='binary_crossentropy',
-                  metrics=['accuracy'])
+#     # Compile Simple Deep Classifier
+#     simple_deep_classifier.compile(optimizer='adam',
+#                   loss='binary_crossentropy',
+#                   metrics=['accuracy'])
     
-    # Return Output
-    return simple_deep_classifier
+#     # Return Output
+#     return simple_deep_classifier
+# Tensorflow
+def def_simple_deep_classifer(height, depth, learning_rate, input_dim, output_dim):
+    input_layer = tf.keras.Input(shape=(input_dim,))
+    #------------------#
+    #   Core Layers    #
+    #------------------#
+    core_layers = fullyConnected_Dense(height)(input_layer)
+    # Activation
+    core_layers = tf.nn.swish(core_layers)
+    # Train additional Depth?
+    if depth>1:
+        # Add additional deep layer(s)
+        for depth_i in range(1,depth):
+            core_layers = fullyConnected_Dense(height)(core_layers)
+            # Activation
+            core_layers = tf.nn.swish(core_layers)
+    
+    #------------------#
+    #  Readout Layers  #
+    #------------------# 
+    # Affine (Readout) Layer (Dense Fully Connected)
+    core_layers = fullyConnected_Dense(output_dim)(core_layers)
+    output_layers = tf.sigmoid(core_layers)
+    # Define Input/Output Relationship (Arch.)
+    trainable_layers_model = tf.keras.Model(input_layer, output_layers)
+    
+    
+    #----------------------------------#
+    # Define Optimizer & Compile Archs.
+    #----------------------------------#
+    opt = Adam(lr=learning_rate)
+    trainable_layers_model.compile(optimizer=opt, loss="mae", metrics=["mse", "mae", "mape"])
 
+    return trainable_layers_model
 #------------------------------------------------------------------------------------------------#
 #                                  Build Deep Classifier Model                                   #
 #------------------------------------------------------------------------------------------------#
@@ -296,7 +329,9 @@ def build_simple_deep_classifier(n_folds , n_jobs, n_iter, param_grid_in, X_trai
     if NOCV == False:
         CV_simple_deep_classifier_CVer.fit(X_train,y_train)
     else:
-        CV_simple_deep_classifier_CVer.fit(X_train,y_train,epochs = param_grid_in['epochs'][0])
+        CV_simple_deep_classifier_CVer.fit(X_train,
+                                           y_train,
+                                           epochs = param_grid_in['epochs'][0])
 
     # Make Prediction(s)
     predicted_classes_train = CV_simple_deep_classifier_CVer.predict(X_train)
