@@ -43,7 +43,7 @@ if trial_run == True:
     param_grid_Vanilla_Nets = {'batch_size': [16],
                     'epochs': [200],
                       'learning_rate': [0.00001],
-                      'height': [1500],
+                      'height': [800],
                       'depth': [2],
                       'input_dim':[1],
                       'output_dim':[1]}
@@ -51,7 +51,7 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [2000],
+                        'height': [1000],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
@@ -62,7 +62,7 @@ if trial_run == True:
     Rand_Forest_Grid = {'learning_rate': [0.01,0.001],
                         'max_depth': [2,8,12],
                         'min_samples_leaf': [2,3,5,10],
-                       'n_estimators': [400],
+                       'n_estimators': [200],
                        }
     
 else:
