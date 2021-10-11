@@ -31,7 +31,7 @@ Partition_using_Inputs = True
 gamma = .5
 # Softmax Layer instead of sigmoid
 softmax_layer = False
-N_parts_possibilities = np.array([1,600]); N_plot_finess = len(N_parts_possibilities)
+N_parts_possibilities = np.array([1,1000]); N_plot_finess = len(N_parts_possibilities)
 
 # Tables
 Relative_MAE_to_FFNN = True
