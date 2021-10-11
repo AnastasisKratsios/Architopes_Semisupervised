@@ -55,7 +55,8 @@ if trial_run == True:
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
-
+    
+    N_parts_possibilities = np.array([1,2,5,20,100,150]); N_plot_finess = len(N_parts_possibilities)
                        
     # Random Forest Grid
     #--------------------#
