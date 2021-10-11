@@ -51,12 +51,12 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [1500],
+                        'height': [2000],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
     
-    N_parts_possibilities = np.array([1,2,5,20,30,40,50,60,70]); N_plot_finess = len(N_parts_possibilities)
+    N_parts_possibilities = np.array([1,150]); N_plot_finess = len(N_parts_possibilities)
                        
     # Random Forest Grid
     #--------------------#
