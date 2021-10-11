@@ -31,7 +31,7 @@ Partition_using_Inputs = True
 gamma = .5
 # Softmax Layer instead of sigmoid
 softmax_layer = False
-N_parts_possibilities = np.array([1,150]); N_plot_finess = len(N_parts_possibilities)
+N_parts_possibilities = np.array([1,600]); N_plot_finess = len(N_parts_possibilities)
 
 # Tables
 Relative_MAE_to_FFNN = True
@@ -72,7 +72,7 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [2500],
+                        'height': [5000],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
