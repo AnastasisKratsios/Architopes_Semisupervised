@@ -16,7 +16,7 @@ trial_run = True
 
 # Test-size Ratio
 test_size_ratio = 0.9
-min_width = 100
+min_width = 200
 min_epochs = 100; min_epochs_classifier = 100
 # Ablation Finess
 N_plot_finess = 4
@@ -31,7 +31,7 @@ Partition_using_Inputs = True
 gamma = .5
 # Softmax Layer instead of sigmoid
 softmax_layer = False
-N_parts_possibilities = np.array([1,2,3,4,8,10,12]); N_plot_finess = len(N_parts_possibilities)
+N_parts_possibilities = np.array([1,150]); N_plot_finess = len(N_parts_possibilities)
 
 # Tables
 Relative_MAE_to_FFNN = True
@@ -57,14 +57,14 @@ if trial_run == True:
     param_grid_FFNNs = {'batch_size': [16],
                     'epochs': [100],
                       'learning_rate': [0.0001],
-                      'height': [400],
+                      'height': [200],
                       'depth': [2],
                       'input_dim':[1],
                       'output_dim':[1]}
     param_grid_Vanilla_Nets = {'batch_size': [16],
-                    'epochs': [200],
+                    'epochs': [100],
                       'learning_rate': [0.00001],
-                      'height': [100],
+                      'height': [400],
                       'depth': [2],
                       'input_dim':[1],
                       'output_dim':[1]}
@@ -72,7 +72,7 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [700],
+                        'height': [2500],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
