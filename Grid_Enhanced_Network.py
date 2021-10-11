@@ -26,7 +26,7 @@ if trial_run == True:
     n_jobs = 4
     # Number of Random CV Draws
     n_iter = 1
-    n_iter_trees = 10
+    n_iter_trees = 5
     # Number of CV Folds
     CV_folds = 2
 
@@ -35,7 +35,7 @@ if trial_run == True:
     #------------------#
     param_grid_FFNNs = {'batch_size': [16],
                     'epochs': [100],
-                      'learning_rate': [0.00001],
+                      'learning_rate': [0.0001],
                       'height': [200],
                       'depth': [2],
                       'input_dim':[1],
@@ -43,7 +43,7 @@ if trial_run == True:
     param_grid_Vanilla_Nets = {'batch_size': [16],
                     'epochs': [100],
                       'learning_rate': [0.00001],
-                      'height': [200],
+                      'height': [400],
                       'depth': [2],
                       'input_dim':[1],
                       'output_dim':[1]}
@@ -51,7 +51,7 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [2000],
+                        'height': [1500],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
@@ -59,10 +59,10 @@ if trial_run == True:
                        
     # Random Forest Grid
     #--------------------#
-    Rand_Forest_Grid = {'learning_rate': [0.01,0.001],
-                        'max_depth': [2,3,4],
-                        'min_samples_leaf': [2,3,5],
-                       'n_estimators': [200],
+    Rand_Forest_Grid = {'learning_rate': [0.0001],
+                        'max_depth': [2,3],
+                        'min_samples_leaf': [5,6,8],
+                       'n_estimators': [100],
                        }
     
 else:
