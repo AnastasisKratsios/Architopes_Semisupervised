@@ -16,7 +16,7 @@ trial_run = True
 
 # Test-size Ratio
 test_size_ratio = 0.9
-min_width = 200
+min_width = 400
 min_epochs = 100; min_epochs_classifier = 100
 # Ablation Finess
 N_plot_finess = 4
@@ -31,7 +31,7 @@ Partition_using_Inputs = True
 gamma = .5
 # Softmax Layer instead of sigmoid
 softmax_layer = False
-N_parts_possibilities = np.array([1,1000]); N_plot_finess = len(N_parts_possibilities)
+N_parts_possibilities = np.array([1,2,3,4,5,10,50,100]); N_plot_finess = len(N_parts_possibilities)
 
 # Tables
 Relative_MAE_to_FFNN = True
@@ -72,7 +72,7 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [5000],
+                        'height': [500],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
