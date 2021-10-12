@@ -1,6 +1,6 @@
 # Which financial dataset do you want to consider (NB this meta-parameter does not impact the non-financial architopes module)
 # Options: AAPL, SnP, or crypto (or Motivational_Example for DEMO version!)
-Option_Function = "Sythetic" 
+Option_Function = "California_Housing" 
 
 # Is this a trial run (to test hardware?)
 trial_run = True
@@ -16,7 +16,7 @@ trial_run = True
 
 # Test-size Ratio
 test_size_ratio = 0.9
-min_width = 400
+min_width = 50
 min_epochs = 100; min_epochs_classifier = 100
 # Ablation Finess
 N_plot_finess = 4
@@ -31,10 +31,41 @@ Partition_using_Inputs = True
 gamma = .5
 # Softmax Layer instead of sigmoid
 softmax_layer = False
-N_parts_possibilities = np.array([1,2,3,4,5,10,50,100]); N_plot_finess = len(N_parts_possibilities)
+N_parts_possibilities = np.array([1,2,50,400]); N_plot_finess = len(N_parts_possibilities)
 
 # Tables
 Relative_MAE_to_FFNN = True
+
+#------------------------------------#
+# Only For Motivational Example Only #
+#------------------------------------#
+## Hyperparameters
+percentage_in_row = .2
+N = 10**5
+
+# Motivational Example (OLD)
+def f_1(x):
+    return 1 + np.sin(10*x)
+def f_2(x):
+    return -2 -x**2
+x_0 = 0
+x_end = 1
+import seaborn as sns
+
+#----------------------------------#
+# Only For Synthetic Examples Only #
+#----------------------------------#
+# In addition to the above
+noise_level = 0.01
+tailedness = 30
+frequency_or_self_paritioning = .25
+def f_unknown(x):
+    if x % frequency_or_self_paritioning >= frequency_or_self_paritioning/2:
+        y = x**2
+    else:
+        y = -np.exp(-x)
+    return y
+D_in = 1
 
 # Hyperparameter Grid (Readout)
 #------------------------------#
@@ -57,7 +88,7 @@ if trial_run == True:
     param_grid_FFNNs = {'batch_size': [16],
                     'epochs': [100],
                       'learning_rate': [0.0001],
-                      'height': [200],
+                      'height': [400],
                       'depth': [2],
                       'input_dim':[1],
                       'output_dim':[1]}
@@ -72,7 +103,7 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [500],
+                        'height': [800],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
