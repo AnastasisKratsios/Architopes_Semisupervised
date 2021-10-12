@@ -1,1 +1,0 @@
-{'n_estimators': 1000, 'min_samples_leaf': 5, 'max_depth': 6, 'learning_rate': 0.001}
