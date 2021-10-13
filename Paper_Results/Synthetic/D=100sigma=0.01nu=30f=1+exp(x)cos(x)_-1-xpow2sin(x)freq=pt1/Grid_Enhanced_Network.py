@@ -13,10 +13,9 @@ trial_run = True
 # Hyperparameter Grids #
 ########################
 #----------------------#
-
 # Test-size Ratio
 test_size_ratio = 0.9
-min_width = 400
+min_width = 200
 min_epochs = 100; min_epochs_classifier = 100
 # Ablation Finess
 N_plot_finess = 4
@@ -31,15 +30,60 @@ Partition_using_Inputs = True
 gamma = .5
 # Softmax Layer instead of sigmoid
 softmax_layer = False
+N_parts_possibilities = np.array([1,100,150]); N_plot_finess = len(N_parts_possibilities)
 
 # Tables
 Relative_MAE_to_FFNN = True
+
+#------------------------------------#
+# Only For Motivational Example Only #
+#------------------------------------#
+## Hyperparameters
+percentage_in_row = .2
+N = 10**4
+
+# Motivational Example (OLD)
+# def f_1(x):
+#     return 1 + np.sin(10*x)
+# def f_2(x):
+#     return -2 -x**2
+# x_0 = 0
+# x_end = 1
+import seaborn as sns
+
+#----------------------------------#
+# Only For Synthetic Examples Only #
+#----------------------------------#
+# In addition to the above
+noise_level = .01
+tailedness = 30
+frequency_or_self_paritioning = .1
+def f_unknown(x):
+    if x % frequency_or_self_paritioning >= frequency_or_self_paritioning/2:
+        y = 1 + np.exp(x)*np.cos(x)
+    else:
+        y = -1-(x**2)*np.cos(x)
+    return y
+D_in = 100
 
 # Hyperparameter Grid (Readout)
 #------------------------------#
 if trial_run == True:
 
     
+    # Training Parameters
+    #----------------------#
+    # Number of Jobs (Cores to use)
+    n_jobs = 4
+    # Number of Random CV Draws
+    n_iter = 1
+    n_iter_trees = 5
+    # Number of CV Folds
+    CV_folds = 2
+
+    
+    # Model Parameters
+    #------------------#
     # Training Parameters
     #----------------------#
     # Number of Jobs (Cores to use)
@@ -76,7 +120,6 @@ if trial_run == True:
                         'input_dim':[1],
                         'output_dim':[1]}
     
-    N_parts_possibilities = np.array([1,10,20,40,100]); N_plot_finess = len(N_parts_possibilities)
                        
     # Random Forest Grid
     #--------------------#

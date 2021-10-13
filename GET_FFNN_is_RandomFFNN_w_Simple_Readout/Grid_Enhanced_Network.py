@@ -13,10 +13,9 @@ trial_run = True
 # Hyperparameter Grids #
 ########################
 #----------------------#
-
 # Test-size Ratio
 test_size_ratio = 0.9
-min_width = 50
+min_width = 200
 min_epochs = 100; min_epochs_classifier = 100
 # Ablation Finess
 N_plot_finess = 4
@@ -31,11 +30,10 @@ Partition_using_Inputs = True
 gamma = .5
 # Softmax Layer instead of sigmoid
 softmax_layer = False
-N_parts_possibilities = np.array([1,5,10,400]); N_plot_finess = len(N_parts_possibilities)
+N_parts_possibilities = np.array([1,5,10,15,20,25,100,150,200]); N_plot_finess = len(N_parts_possibilities)
 
 # Tables
 Relative_MAE_to_FFNN = True
-
 
 #------------------------------------#
 # Only For Motivational Example Only #
@@ -59,7 +57,7 @@ import seaborn as sns
 # In addition to the above
 noise_level = .01
 tailedness = 30
-frequency_or_self_paritioning = .01
+frequency_or_self_paritioning = .25
 def f_unknown(x):
     if x % frequency_or_self_paritioning >= frequency_or_self_paritioning/2:
         y = 1 + np.exp(x)*np.cos(x)
@@ -117,7 +115,7 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [1500],
+                        'height': [2000],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
