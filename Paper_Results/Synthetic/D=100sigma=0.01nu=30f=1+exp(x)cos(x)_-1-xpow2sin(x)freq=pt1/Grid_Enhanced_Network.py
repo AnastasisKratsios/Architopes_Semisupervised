@@ -1,6 +1,6 @@
 # Which financial dataset do you want to consider (NB this meta-parameter does not impact the non-financial architopes module)
 # Options: AAPL, SnP, or crypto (or Motivational_Example for DEMO version!)
-Option_Function = "Sythetic" 
+Option_Function = "SnP" 
 
 # Is this a trial run (to test hardware?)
 trial_run = True
@@ -15,7 +15,7 @@ trial_run = True
 #----------------------#
 # Test-size Ratio
 test_size_ratio = 0.9
-min_width = 200
+min_width = 100
 min_epochs = 100; min_epochs_classifier = 100
 # Ablation Finess
 N_plot_finess = 4
@@ -30,7 +30,7 @@ Partition_using_Inputs = True
 gamma = .5
 # Softmax Layer instead of sigmoid
 softmax_layer = False
-N_parts_possibilities = np.array([1,100,150]); N_plot_finess = len(N_parts_possibilities)
+N_parts_possibilities = np.array([1,2,3,5,20,50,200,400]); N_plot_finess = len(N_parts_possibilities)
 
 # Tables
 Relative_MAE_to_FFNN = True
@@ -57,7 +57,7 @@ import seaborn as sns
 # In addition to the above
 noise_level = .01
 tailedness = 30
-frequency_or_self_paritioning = .1
+frequency_or_self_paritioning = .25
 def f_unknown(x):
     if x % frequency_or_self_paritioning >= frequency_or_self_paritioning/2:
         y = 1 + np.exp(x)*np.cos(x)
@@ -97,17 +97,31 @@ if trial_run == True:
     
     # Model Parameters
     #------------------#
+    
+    # Training Parameters
+    #----------------------#
+    # Number of Jobs (Cores to use)
+    n_jobs = 4
+    # Number of Random CV Draws
+    n_iter = 1
+    n_iter_trees = 1#20
+    # Number of CV Folds
+    CV_folds = 2
+
+    
+    # Model Parameters
+    #------------------#
     param_grid_FFNNs = {'batch_size': [16],
-                    'epochs': [100],
-                      'learning_rate': [0.0001],
-                      'height': [200],
-                      'depth': [2],
-                      'input_dim':[1],
-                      'output_dim':[1]}
-    param_grid_Vanilla_Nets = {'batch_size': [16],
                     'epochs': [100],
                       'learning_rate': [0.00001],
                       'height': [200],
+                      'depth': [3],
+                      'input_dim':[1],
+                      'output_dim':[1]}
+    param_grid_Vanilla_Nets = {'batch_size': [16],
+                    'epochs': [200],
+                      'learning_rate': [0.00001],
+                      'height': [800],
                       'depth': [2],
                       'input_dim':[1],
                       'output_dim':[1]}
@@ -115,7 +129,7 @@ if trial_run == True:
     param_grid_Deep_Classifier = {'batch_size': [16],
                         'epochs': [200],
                         'learning_rate': [0.00001],
-                        'height': [2000],
+                        'height': [800],
                         'depth': [1],
                         'input_dim':[1],
                         'output_dim':[1]}
